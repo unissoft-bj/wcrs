@@ -74,7 +74,7 @@ CREATE TABLE if not exists rule (
 CREATE TABLE if not exists product_rule (
     id             int unsigned        NOT NULL auto_increment primary key,
     product_id     int unsigned        NOT NULL,
-    rule_id        smallint unsigned   NOT NULL,
+    rule_id        int unsigned   NOT NULL,
     create_t       datetime            DEFAULT NULL,
     foreign key    (product_id)        references product (id),
     foreign key    (rule_id)           references rule (id),
@@ -90,7 +90,7 @@ CREATE TABLE if not exists user_product (
     product_id     int unsigned        NOT NULL,
     amount         numeric(15,2)       NOT NULL,
     create_t       datetime            DEFAULT NULL,
-    foreign key    (user_id)           references user (id),
+    foreign key    (user_id)           references user_info (openid),
     foreign key    (product_id)        references product (id),
     unique index   user_product_idx1   (user_id, product_id)
 )  DEFAULT CHARSET=utf8;
