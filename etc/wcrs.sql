@@ -17,6 +17,7 @@ use wcrs;
 CREATE TABLE if not exists user_info (
     openid         VARCHAR(36)       primary key NOT NULL,
     scene_id       int               NOT NULL DEFAULT 0,
+    union_id       VARCHAR(36)       NOT NULL DEFAULT '',       #   usage?
     parent         int               NOT NULL DEFAULT 0,        #   must be a valid scene_id
     nick_name      varchar(40)       NOT NULL,	                #	姓   
     gender         varchar(6)        NOT NULL DEFAULT 'MALE',	#	性别  //user info.
@@ -48,10 +49,11 @@ CREATE TABLE if not exists wc_event (
 # product
 ###############################################################
 CREATE TABLE if not exists product (
-    id              int unsigned       NOT NULL auto_increment primary key,
-    description     varchar(30)        NOT NULL DEFAULT '',
-    p_type          varchar(30)        NOT NULL DEFAULT '',
-    create_t        datetime           DEFAULT NULL	            #	记录时间
+    id              int unsigned         NOT NULL auto_increment primary key,
+    description     varchar(30)          NOT NULL DEFAULT '',
+    p_type          varchar(30)          NOT NULL DEFAULT '',
+    expired         tinyint(1) unsigned  NOT NULL DEFAULT '1',
+    create_t        datetime             DEFAULT NULL	            #	记录时间
 )  DEFAULT CHARSET=utf8;
 
 ###############################################################
@@ -74,7 +76,7 @@ CREATE TABLE if not exists rule (
 CREATE TABLE if not exists product_rule (
     id             int unsigned        NOT NULL auto_increment primary key,
     product_id     int unsigned        NOT NULL,
-    rule_id        int unsigned   NOT NULL,
+    rule_id        int unsigned        NOT NULL,
     create_t       datetime            DEFAULT NULL,
     foreign key    (product_id)        references product (id),
     foreign key    (rule_id)           references rule (id),
