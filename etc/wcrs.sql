@@ -66,6 +66,7 @@ CREATE TABLE if not exists rule (
     third           smallint           NOT NULL DEFAULT 0,
     root_p          smallint           NOT NULL DEFAULT 10,
     root_id         varchar(32)        NOT NULL,
+    root_name       varchar(32)      DEFAULT NULL,
     description     varchar(100)       NOT NULL DEFAULT '',
     create_t        datetime           DEFAULT NULL	            #	记录时间
 )  DEFAULT CHARSET=utf8;
