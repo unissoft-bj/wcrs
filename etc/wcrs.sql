@@ -71,7 +71,7 @@ CREATE TABLE if not exists rule (
 )  DEFAULT CHARSET=utf8;
 
 ###############################################################
-# product_rule
+# product_rule ( product_id --> rule_id, 1 --> M, multiple affiliation_nodes.
 ###############################################################
 CREATE TABLE if not exists product_rule (
     id             int unsigned        NOT NULL auto_increment primary key,
