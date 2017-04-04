@@ -20,7 +20,7 @@ CREATE TABLE if not exists user_info (
     union_id       VARCHAR(36)       NOT NULL DEFAULT '',       #   usage?
     parent         int               NOT NULL DEFAULT 0,        #   must be a valid scene_id
     nick_name      varchar(40)       NOT NULL,	                #	姓   
-    gender         varchar(6)        NOT NULL DEFAULT 'MALE',	#	性别  //user info.
+    gender         smallint          NOT NULL DEFAULT 0,	    #	性别  //user info.
     language       varchar(6)        NOT NULL DEFAULT 'cn',
     city           varchar(30)       NOT NULL DEFAULT '',
     province       varchar(30)       NOT NULL DEFAULT '',	
@@ -33,7 +33,7 @@ CREATE TABLE if not exists user_info (
 )  DEFAULT CHARSET=utf8;
 
 ###############################################################
-# wc_event
+# wc_event, wechat event
 ###############################################################
 CREATE TABLE if not exists wc_event (
     id              int unsigned       NOT NULL auto_increment primary key,
@@ -57,16 +57,16 @@ CREATE TABLE if not exists product (
 )  DEFAULT CHARSET=utf8;
 
 ###############################################################
-# rule
+# rule, aff_node --> affilication node
 ###############################################################
 CREATE TABLE if not exists rule (
     id              int unsigned       NOT NULL auto_increment primary key,
     first           smallint           NOT NULL DEFAULT 0,
     second          smallint           NOT NULL DEFAULT 0,
     third           smallint           NOT NULL DEFAULT 0,
-    root_p          smallint           NOT NULL DEFAULT 10,
-    root_id         varchar(32)        NOT NULL,
-    root_name       varchar(32)      DEFAULT NULL,
+    aff_node_p      smallint           NOT NULL DEFAULT 10,
+    aff_node_id     varchar(32)        NOT NULL,
+    aff_node_name   varchar(32)        DEFAULT NULL,
     description     varchar(100)       NOT NULL DEFAULT '',
     create_t        datetime           DEFAULT NULL	            #	记录时间
 )  DEFAULT CHARSET=utf8;
