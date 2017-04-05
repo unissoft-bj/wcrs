@@ -42,9 +42,10 @@ public class JingshujuController {
 		logger.info("jingshuju data: " + data.getFormName() + data.getEntry());
 		
 		String oid = data.getEntry().getXFieldWeixinOpenid();
-		handler.handle(oid);
+		String phone = data.getEntry().getField2();
+		handler.handle(oid, phone);
 		
-		return oid;
+		return phone;
 	}
 	
 	
