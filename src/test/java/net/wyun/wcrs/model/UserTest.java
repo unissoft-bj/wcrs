@@ -13,6 +13,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 public class UserTest {
+	
+	private ObjectMapper mapper = new ObjectMapper();
 
 	@Test
 	public void user2JsonTest() throws JsonProcessingException {
@@ -32,7 +34,6 @@ public class UserTest {
 		o.setStatus(UserStatus.REGISTERED);
 		o.setLanguage("cn");
 		
-		ObjectMapper mapper = new ObjectMapper();
 		String r_str = mapper.writeValueAsString(o);
 		System.out.println(r_str);
 		

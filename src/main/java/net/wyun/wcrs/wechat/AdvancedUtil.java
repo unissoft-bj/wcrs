@@ -181,12 +181,21 @@ public class AdvancedUtil {
 	 * @return WeixinUserInfo
 	 */
 	public static WeixinUserInfo getUserInfo(String accessToken, String openId) {
-		WeixinUserInfo weixinUserInfo = null;
+		
 		// 拼接请求地址
 		String requestUrl = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID";
 		requestUrl = requestUrl.replace("ACCESS_TOKEN", accessToken).replace("OPENID", openId);
 		// 获取用户信息
 		JSONObject jsonObject = CommonUtil.httpsRequest(requestUrl, "GET", null);
+		
+		log.debug("json output: {}", jsonObject.toString());
+
+		WeixinUserInfo weixinUserInfo = parseJson(jsonObject);
+		return weixinUserInfo;
+	}
+
+	public static WeixinUserInfo parseJson(JSONObject jsonObject) {
+		WeixinUserInfo weixinUserInfo = null;
 
 		if (null != jsonObject) {
 			try {
@@ -211,7 +220,12 @@ public class AdvancedUtil {
 				weixinUserInfo.setLanguage(jsonObject.getString("language"));
 				// 用户头像
 				weixinUserInfo.setHeadImgUrl(jsonObject.getString("headimgurl"));
+				////////////////////////////////////////////////////////////////
+				//unionid; ATTN: unionid could be empty string depends on account setup
+				////////////////////////////////////////////////////////////////
+				weixinUserInfo.setUnionid(jsonObject.optString("unionid"));
 			} catch (Exception e) {
+				e.printStackTrace();
 				if (0 == weixinUserInfo.getSubscribe()) {
 					log.error("用户{}已取消关注", weixinUserInfo.getOpenId());
 				} else {
@@ -223,7 +237,6 @@ public class AdvancedUtil {
 		}
 		return weixinUserInfo;
 	}
-
 	/**
 	 * 获取关注者列表
 	 * 

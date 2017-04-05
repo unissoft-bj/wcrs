@@ -10,5 +10,5 @@ public interface JinShuJuHandler {
 	 * @param openId
 	 * @return  ticket, String
 	 */
-	void handle(String openId);
+	void handle(String openId, String phone);
 }

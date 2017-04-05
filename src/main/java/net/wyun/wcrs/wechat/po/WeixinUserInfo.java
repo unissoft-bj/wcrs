@@ -27,6 +27,18 @@ public class WeixinUserInfo {
 	private String language;
 	// 用户头像
 	private String headImgUrl;
+	
+	private String unionid;
+	
+	
+
+	public String getUnionid() {
+		return unionid;
+	}
+
+	public void setUnionid(String unionid) {
+		this.unionid = unionid;
+	}
 
 	public String getOpenId() {
 		return openId;

@@ -9,6 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import net.sf.json.JSONObject;
 import net.wyun.wcrs.wechat.po.WeixinUserInfo;
 import net.wyun.wcrs.wechat.po.WeixinUserList;
 
@@ -32,6 +33,30 @@ public class AdvancedUtilTest {
 	public void tearDown() throws Exception {
 	}
 
+	
+	
+	String jsonResp = "{\"subscribe\":1,\"openid\":\"oEZJk0VlOT4P1x4647bzWS8YdbDg\",\"nickname\":\"michaelyin\",\"sex\":1,\"language\":\"en\",\"city\":\"西雅图\",\"province\":\"华盛顿\",\"country\":\"美国\",\"headimgurl\":\"http://wx.qlogo.cn/mmopen/icochrDgZzqpaxTMTHbTHG6WfDjbBEGmibUtlI3ZgrhMeQFfcj3hKgPNpfXmVogzJRQl2yXsT1iaCQ03WfP7gWqHwvEjnQxxXia4/0\",\"subscribe_time\":1490399964,\"remark\":\"\",\"groupid\":0,\"tagid_list\":[]}";
+	String jsonResp_with_union_id = "{\"unionid\":\"o6_bmasdasdsad6_2sgVt7hMZOPfL\",\"subscribe\":1,\"openid\":\"oEZJk0VlOT4P1x4647bzWS8YdbDg\",\"nickname\":\"michaelyin\",\"sex\":1,\"language\":\"en\",\"city\":\"西雅图\",\"province\":\"华盛顿\",\"country\":\"美国\",\"headimgurl\":\"http://wx.qlogo.cn/mmopen/icochrDgZzqpaxTMTHbTHG6WfDjbBEGmibUtlI3ZgrhMeQFfcj3hKgPNpfXmVogzJRQl2yXsT1iaCQ03WfP7gWqHwvEjnQxxXia4/0\",\"subscribe_time\":1490399964,\"remark\":\"\",\"groupid\":0,\"tagid_list\":[]}";
+	
+	@Test
+	public void testParseWXUserInfoJson(){
+		
+		
+		JSONObject jo = JSONObject.fromObject(jsonResp);
+		System.out.println("json: " + jo.toString());
+		WeixinUserInfo wui = AdvancedUtil.parseJson(jo);
+		
+		assertEquals(wui.getOpenId(), "oEZJk0VlOT4P1x4647bzWS8YdbDg");
+		assertEquals(wui.getUnionid().isEmpty(), true);
+		
+		jo = JSONObject.fromObject(jsonResp_with_union_id);
+        wui = AdvancedUtil.parseJson(jo);
+		
+		assertEquals(wui.getUnionid(), "o6_bmasdasdsad6_2sgVt7hMZOPfL");
+		
+	}
+	
+	
 	@Test
 	public void test() {
 		
