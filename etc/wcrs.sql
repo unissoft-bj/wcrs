@@ -20,6 +20,7 @@ CREATE TABLE if not exists user_info (
     union_id       VARCHAR(36)       NOT NULL DEFAULT '',       #   usage?
     parent         int               NOT NULL DEFAULT 0,        #   must be a valid scene_id
     nick_name      varchar(40)       NOT NULL,	                #	姓   
+    phone          varchar(16)       DEFAULT NULL,
     gender         smallint          NOT NULL DEFAULT 0,	    #	性别  //user info.
     language       varchar(6)        NOT NULL DEFAULT 'cn',
     city           varchar(30)       NOT NULL DEFAULT '',
@@ -29,7 +30,8 @@ CREATE TABLE if not exists user_info (
     create_t       datetime          DEFAULT NULL,	            #	记录时间
     modify_t       datetime          DEFAULT NULL,	            #	记录更新时间
     status         smallint          NOT NULL DEFAULT 0,
-    ticket         varchar(100)      DEFAULT NULL	            #
+    ticket         varchar(100)      DEFAULT NULL,	            #
+    CONSTRAINT     phone_unique UNIQUE (phone)
 )  DEFAULT CHARSET=utf8;
 
 ###############################################################
@@ -89,13 +91,13 @@ CREATE TABLE if not exists product_rule (
 ###############################################################
 CREATE TABLE if not exists user_product (
     id             int unsigned        NOT NULL auto_increment primary key,
-    user_id        VARCHAR(36)         NOT NULL,
+    union_id        VARCHAR(36)         NOT NULL,
     product_id     int unsigned        NOT NULL,
     amount         numeric(15,2)       NOT NULL,
     create_t       datetime            DEFAULT NULL,
-    foreign key    (user_id)           references user_info (openid),
-    foreign key    (product_id)        references product (id),
-    unique index   user_product_idx1   (user_id, product_id)
+    #foreign key    (user_id)           references user_info (union_id),
+    foreign key    (product_id)        references product (id)
+    #unique index   user_product_idx1   (user_id, product_id)
 )  DEFAULT CHARSET=utf8;
 
 
