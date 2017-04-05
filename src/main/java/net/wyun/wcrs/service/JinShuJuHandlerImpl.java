@@ -42,9 +42,11 @@ public class JinShuJuHandlerImpl implements JinShuJuHandler{
 	public class Handler implements Runnable{
 
 	    protected String oid = null;
+	    protected String phone = null;
 
-	    public Handler(String oid) {
+	    public Handler(String oid, String phone) {
 	        this.oid = oid;
+	        this.phone = phone;
 	    }
 
 	    public void run() {
@@ -65,6 +67,7 @@ public class JinShuJuHandlerImpl implements JinShuJuHandler{
 	    			u.setTicket(ticket);
 	    		}
 	    		
+	    		u.setPhone(phone);
 	    		u.setStatus(UserStatus.REGISTERED);
 	    		u.setModify_t(new Date());
 	    		userRepo.save(u);
@@ -76,9 +79,9 @@ public class JinShuJuHandlerImpl implements JinShuJuHandler{
 	}
 
 	@Override
-	public void handle(String openId) {
-		logger.info("process: " + openId);
-		executor.execute(new Handler(openId));
+	public void handle(String openId, String phone) {
+		logger.info("process: oid -- {}, phone -- {}", openId, phone);
+		executor.execute(new Handler(openId, phone));
 	}
 
 }

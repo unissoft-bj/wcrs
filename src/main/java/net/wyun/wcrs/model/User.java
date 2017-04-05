@@ -43,7 +43,23 @@ public class User {
 	String language;
 	UserStatus status;
 	
+	@Column(name = "union_id", nullable = false)
+	private String unionId;
 	
+	private String phone;
+	
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+	public String getUnionId() {
+		return unionId;
+	}
+	public void setUnionId(String unionId) {
+		this.unionId = unionId;
+	}
 	public UserStatus getStatus() {
 		return status;
 	}
