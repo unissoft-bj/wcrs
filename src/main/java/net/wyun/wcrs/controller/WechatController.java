@@ -200,6 +200,11 @@ public class WechatController {
 		return evt;
 	}
 
+	/**
+	 * function to create a new user in user_info table
+	 * @param wx_user
+	 * @return
+	 */
 	private User fromWXUser(WeixinUserInfo wx_user) {
 		
         User o = new User();
@@ -217,6 +222,7 @@ public class WechatController {
 		o.setTicket("");
 		o.setStatus(UserStatus.SUBSCRIBER);
 		o.setLanguage(wx_user.getLanguage());
+		o.setUnionId(wx_user.getUnionid());
 		
 		return o;
 	}
