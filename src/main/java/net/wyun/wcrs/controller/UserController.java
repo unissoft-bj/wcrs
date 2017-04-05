@@ -46,6 +46,9 @@ public class UserController {
 		return "$25.88";
 	}
 	
+	@RequestMapping(value= "/user/phone/{phoneNum}", method=RequestMethod.GET)
+	User getUserByPhone(@PathVariable("phoneNum") String phoneNum){
+		return userRepo.findByPhone(phoneNum);
+	}
 	
-
 }
