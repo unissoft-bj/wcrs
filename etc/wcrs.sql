@@ -59,10 +59,11 @@ CREATE TABLE if not exists product (
 )  DEFAULT CHARSET=utf8;
 
 ###############################################################
-# rule, aff_node --> affilication node
+# affiliate, aff_node --> affilication node
 ###############################################################
-CREATE TABLE if not exists rule (
+CREATE TABLE if not exists affiliate (
     id              int unsigned       NOT NULL auto_increment primary key,
+    product_id      int unsigned       NOT NULL,
     first           smallint           NOT NULL DEFAULT 0,
     second          smallint           NOT NULL DEFAULT 0,
     third           smallint           NOT NULL DEFAULT 0,
@@ -70,21 +71,13 @@ CREATE TABLE if not exists rule (
     aff_node_id     varchar(32)        NOT NULL,
     aff_node_name   varchar(32)        DEFAULT NULL,
     description     varchar(100)       NOT NULL DEFAULT '',
-    create_t        datetime           DEFAULT NULL	            #	记录时间
+    create_t        datetime           DEFAULT NULL,	            #	记录时间
+    foreign key    (product_id)        references product (id)
 )  DEFAULT CHARSET=utf8;
 
 ###############################################################
 # product_rule ( product_id --> rule_id, 1 --> M, multiple affiliation_nodes.
 ###############################################################
-CREATE TABLE if not exists product_rule (
-    id             int unsigned        NOT NULL auto_increment primary key,
-    product_id     int unsigned        NOT NULL,
-    rule_id        int unsigned        NOT NULL,
-    create_t       datetime            DEFAULT NULL,
-    foreign key    (product_id)        references product (id),
-    foreign key    (rule_id)           references rule (id),
-    unique index   product_rule_idx1   (product_id, rule_id)
-)  DEFAULT CHARSET=utf8;
 
 ###############################################################
 # user_product (? root id), open_id is unique across all public accounts?
