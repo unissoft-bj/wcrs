@@ -119,5 +119,21 @@ CREATE TABLE if not exists user_product (
     #unique index   user_product_idx1   (user_id, product_id)
 )  DEFAULT CHARSET=utf8;
 
+###############################################################
+# billing:
+# in user_product table, each record generates
+# 4 trans: first, second, third, and affiliate root
+###############################################################
+CREATE TABLE if not exists billing (
+    id             int unsigned        NOT NULL auto_increment primary key,
+    union_id       VARCHAR(36)         NOT NULL,
+    u_p_id         int unsigned        NOT NULL,
+    amount         numeric(15,2)       NOT NULL,
+    create_t       datetime            DEFAULT NULL,
+    foreign key    (union_id)          references w_c_user (union_id),
+    foreign key    (u_p_id)            references user_product (id)
+)  DEFAULT CHARSET=utf8;
+
+
 
 
