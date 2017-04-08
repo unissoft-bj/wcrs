@@ -3,7 +3,7 @@ create database wcrs;
 use wcrs;
 
 ###############################################################
-##1.  start from mysql 5.5, innodb is the default storage enginer
+##1.  start from mysql 5.5, innodb is the default storage engine
 ##2.  use unsigned
 ##3.  use NOT NULL if possible
 ##4.  use ENUM
@@ -12,12 +12,26 @@ use wcrs;
 ###############################################################
 
 ###############################################################
-# user_info
+# public_account_user (open_id uniquely identify one user belongs to a public account)
 ###############################################################
-CREATE TABLE if not exists user_info (
-    openid         VARCHAR(36)       primary key NOT NULL,
+CREATE TABLE if not exists p_a_user (
+    open_id        VARCHAR(36)       primary key NOT NULL,
+    p_a_id         varchar(30)       NOT NULL,
     scene_id       int               NOT NULL DEFAULT 0,
     union_id       VARCHAR(36)       NOT NULL DEFAULT '',       #   usage?
+    parent         int               NOT NULL DEFAULT 0,        #   must be a valid scene_id
+    create_t       datetime          DEFAULT NULL,	            #	记录时间
+    modify_t       datetime          DEFAULT NULL,	            #	记录更新时间
+    status         smallint          NOT NULL DEFAULT 0,
+    ticket         varchar(100)      DEFAULT NULL,	            #
+    foreign key    (union_id)        references w_c _user(union_id)
+)  DEFAULT CHARSET=utf8;
+
+###############################################################
+# wechat_user (union_id uniquely identify one user)
+###############################################################
+CREATE TABLE if not exists w_c_user (
+    union_id       VARCHAR(36)       primary key NOT NULL,
     parent         int               NOT NULL DEFAULT 0,        #   must be a valid scene_id
     nick_name      varchar(40)       NOT NULL,	                #	姓   
     phone          varchar(16)       DEFAULT NULL,
@@ -30,14 +44,26 @@ CREATE TABLE if not exists user_info (
     create_t       datetime          DEFAULT NULL,	            #	记录时间
     modify_t       datetime          DEFAULT NULL,	            #	记录更新时间
     status         smallint          NOT NULL DEFAULT 0,
-    ticket         varchar(100)      DEFAULT NULL,	            #
-    CONSTRAINT     phone_unique UNIQUE (phone)
+    CONSTRAINT     phone_unique      UNIQUE (phone)
+)  DEFAULT CHARSET=utf8;
+
+
+###############################################################
+# public_account, public account with wechat
+###############################################################
+CREATE TABLE if not exists public_account (
+    id              int unsigned       NOT NULL auto_increment primary key,
+    p_a_id          varchar(30)        NOT NULL,
+    app_id          varchar(20)        NOT NULL,
+    app_secret      varchar(36)        NOT NULL,
+    create_t        datetime           DEFAULT NULL	            #	记录时间
 )  DEFAULT CHARSET=utf8;
 
 ###############################################################
-# wc_event, wechat event
+# public_account_event, event from a public account with wechat
+# relationship to public account
 ###############################################################
-CREATE TABLE if not exists wc_event (
+CREATE TABLE if not exists p_a_event (
     id              int unsigned       NOT NULL auto_increment primary key,
     to_user_name    varchar(30)        NOT NULL DEFAULT '',
     from_user_name  varchar(30)        NOT NULL DEFAULT '',
@@ -80,7 +106,7 @@ CREATE TABLE if not exists affiliate (
 ###############################################################
 
 ###############################################################
-# user_product (? root id), open_id is unique across all public accounts?
+# user_product
 ###############################################################
 CREATE TABLE if not exists user_product (
     id             int unsigned        NOT NULL auto_increment primary key,
