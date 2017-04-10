@@ -10,29 +10,12 @@ use wcrs;
 ##5.  table name in SINGULAR
 ## http://www.devshed.com/c/a/mysql/designing-a-mysql-database-tips-and-techniques/
 ###############################################################
-
-###############################################################
-# public_account_user (open_id uniquely identify one user belongs to a public account)
-###############################################################
-CREATE TABLE if not exists p_a_user (
-    open_id        VARCHAR(36)       primary key NOT NULL,
-    p_a_id         varchar(30)       NOT NULL,
-    scene_id       int               NOT NULL DEFAULT 0,
-    union_id       VARCHAR(36)       NOT NULL DEFAULT '',       #   usage?
-    parent         int               NOT NULL DEFAULT 0,        #   must be a valid scene_id
-    create_t       datetime          DEFAULT NULL,	            #	记录时间
-    modify_t       datetime          DEFAULT NULL,	            #	记录更新时间
-    status         smallint          NOT NULL DEFAULT 0,
-    ticket         varchar(100)      DEFAULT NULL,	            #
-    foreign key    (union_id)        references w_c _user(union_id)
-)  DEFAULT CHARSET=utf8;
-
 ###############################################################
 # wechat_user (union_id uniquely identify one user)
 ###############################################################
 CREATE TABLE if not exists w_c_user (
     union_id       VARCHAR(36)       primary key NOT NULL,
-    parent         int               NOT NULL DEFAULT 0,        #   must be a valid scene_id
+    parent         VARCHAR(36)       DEFAULT NULL,        #   must be a valid scene_id
     nick_name      varchar(40)       NOT NULL,	                #	姓   
     phone          varchar(16)       DEFAULT NULL,
     gender         smallint          NOT NULL DEFAULT 0,	    #	性别  //user info.
@@ -44,19 +27,35 @@ CREATE TABLE if not exists w_c_user (
     create_t       datetime          DEFAULT NULL,	            #	记录时间
     modify_t       datetime          DEFAULT NULL,	            #	记录更新时间
     status         smallint          NOT NULL DEFAULT 0,
-    CONSTRAINT     phone_unique      UNIQUE (phone)
+    CONSTRAINT     phone_unique      UNIQUE (phone),
+    FOREIGN KEY    (parent)          REFERENCES w_c_user(union_id) 
 )  DEFAULT CHARSET=utf8;
-
 
 ###############################################################
 # public_account, public account with wechat
 ###############################################################
 CREATE TABLE if not exists public_account (
-    id              int unsigned       NOT NULL auto_increment primary key,
-    p_a_id          varchar(30)        NOT NULL,
+    p_a_id          varchar(30)        primary key NOT NULL,
     app_id          varchar(20)        NOT NULL,
     app_secret      varchar(36)        NOT NULL,
     create_t        datetime           DEFAULT NULL	            #	记录时间
+)  DEFAULT CHARSET=utf8;
+
+###############################################################
+# public_account_user (open_id uniquely identify one user belongs to a public account)
+###############################################################
+CREATE TABLE if not exists p_a_user (
+    open_id        VARCHAR(36)       primary key NOT NULL,
+    p_a_id         varchar(30)       NOT NULL,
+    scene_id       int               DEFAULT NULL,
+    union_id       VARCHAR(36)       DEFAULT NULL,                  #   usage?
+    create_t       datetime          DEFAULT NULL,	                #	记录时间
+    modify_t       datetime          DEFAULT NULL,	                #	记录更新时间
+    status         smallint          NOT NULL DEFAULT 0,
+    ticket         varchar(100)      DEFAULT NULL,	                #
+    constraint     union_id_unique   UNIQUE (union_id),              #limit one union_id to one public account
+    foreign key    (union_id)        references w_c_user(union_id),
+    foreign key    (p_a_id)          references public_account (p_a_id)
 )  DEFAULT CHARSET=utf8;
 
 ###############################################################
@@ -94,11 +93,12 @@ CREATE TABLE if not exists affiliate (
     second          smallint           NOT NULL DEFAULT 0,
     third           smallint           NOT NULL DEFAULT 0,
     aff_node_p      smallint           NOT NULL DEFAULT 10,
-    aff_node_id     varchar(32)        NOT NULL,
+    aff_node_id     varchar(36)        NOT NULL,
     aff_node_name   varchar(32)        DEFAULT NULL,
     description     varchar(100)       NOT NULL DEFAULT '',
     create_t        datetime           DEFAULT NULL,	            #	记录时间
-    foreign key    (product_id)        references product (id)
+    foreign key    (product_id)        references product (id),
+    foreign key    (aff_node_id)       references w_c_user (union_id)
 )  DEFAULT CHARSET=utf8;
 
 ###############################################################
@@ -110,13 +110,12 @@ CREATE TABLE if not exists affiliate (
 ###############################################################
 CREATE TABLE if not exists user_product (
     id             int unsigned        NOT NULL auto_increment primary key,
-    union_id        VARCHAR(36)         NOT NULL,
+    union_id       VARCHAR(36)         NOT NULL,
     product_id     int unsigned        NOT NULL,
     amount         numeric(15,2)       NOT NULL,
     create_t       datetime            DEFAULT NULL,
-    #foreign key    (user_id)           references user_info (union_id),
+    foreign key    (union_id)          references w_c_user (union_id),
     foreign key    (product_id)        references product (id)
-    #unique index   user_product_idx1   (user_id, product_id)
 )  DEFAULT CHARSET=utf8;
 
 ###############################################################
