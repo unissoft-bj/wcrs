@@ -20,7 +20,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "wc_event")
+@Table(name = "p_a_event")
 public class WechatEvent {
 	
 	public WechatEvent(String toUserName, String fromUserName, String msgType, String event, String eventKey) {
