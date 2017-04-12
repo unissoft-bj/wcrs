@@ -1,7 +1,7 @@
 /**
  * 
  */
-package net.wyun.wcrs.model;
+package net.wyun.wcrs.model.repo;
 
 /**
  * @author michael
@@ -9,6 +9,8 @@ package net.wyun.wcrs.model;
  */
 
 import org.springframework.data.repository.CrudRepository;
+
+import net.wyun.wcrs.model.Product;
 
 /**
  *

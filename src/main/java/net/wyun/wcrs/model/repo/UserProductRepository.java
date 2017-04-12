@@ -1,7 +1,7 @@
 /**
  * 
  */
-package net.wyun.wcrs.model;
+package net.wyun.wcrs.model.repo;
 
 import java.util.List;
 
@@ -11,6 +11,8 @@ import java.util.List;
  */
 
 import org.springframework.data.repository.CrudRepository;
+
+import net.wyun.wcrs.model.UserProduct;
 
 /**
  *

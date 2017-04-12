@@ -1,7 +1,7 @@
 /**
  * 
  */
-package net.wyun.wcrs.model;
+package net.wyun.wcrs.model.repo;
 
 import java.util.Date;
 import java.util.List;
@@ -11,6 +11,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
+
+import net.wyun.wcrs.model.User;
 
 /**
  * @author Xuecheng
@@ -24,11 +26,6 @@ public interface UserRepository extends CrudRepository<User, String>{
 	int removeByCreate_tGreaterThan(@Param("cutOff") Date cutOff);
 	
 	List<User> deleteByCreatetAfter(@Param("cutOff") Date cutOff);
-	
-	User findByOpenID(String openId);
-	
-	@Query("select coalesce(max(o.sceneID), '1') from User o")
-	int findMaxSceneID();
 	
 	User findByPhone(String phone);
 	
