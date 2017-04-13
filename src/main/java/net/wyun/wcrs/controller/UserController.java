@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import net.wyun.wcrs.model.PAUser;
 import net.wyun.wcrs.model.User;
-import net.wyun.wcrs.model.UserRepository;
+import net.wyun.wcrs.model.repo.PAUserRepository;
+import net.wyun.wcrs.model.repo.UserRepository;
 
 /**
  * @author Xuecheng
@@ -30,6 +32,9 @@ public class UserController {
 	@Autowired
 	UserRepository userRepo;
 	
+	@Autowired
+	PAUserRepository paUserRepo;
+	
 	@RequestMapping(value= "/user", method=RequestMethod.POST)
 	User saveUser(@RequestBody User user){
 		
@@ -38,13 +43,10 @@ public class UserController {
 	
 	@RequestMapping(value= "/user/{oid}", method=RequestMethod.GET)
 	User getUser(@PathVariable("oid") String openId){
-		return userRepo.findByOpenID(openId);
+		PAUser paU = paUserRepo.findByOpenId(openId);
+		return paU.getUser();
 	}
 	
-	@RequestMapping(value= "/bonus/{oid}", method=RequestMethod.GET)
-	String getUserBonus(@PathVariable("oid") String openId){
-		return "$25.88";
-	}
 	
 	@RequestMapping(value= "/user/phone/{phoneNum}", method=RequestMethod.GET)
 	User getUserByPhone(@PathVariable("phoneNum") String phoneNum){
