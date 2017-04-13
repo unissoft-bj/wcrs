@@ -41,7 +41,7 @@ public class UserProduct {
 	String unionId; //union_id        VARCHAR(36)         NOT NULL,
 	
 	@Column(name = "product_id")
-    Integer productId; //product_id     int unsigned        NOT NULL,
+    Long productId; //product_id     int unsigned        NOT NULL,
 	
     BigDecimal amount; //         numeric(15,2)       NOT NULL,
     
@@ -56,11 +56,11 @@ public class UserProduct {
 		this.unionId = unionId;
 	}
 
-	public Integer getProductId() {
+	public Long getProductId() {
 		return productId;
 	}
 
-	public void setProductId(Integer productId) {
+	public void setProductId(Long productId) {
 		this.productId = productId;
 	}
 
