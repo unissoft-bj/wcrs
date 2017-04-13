@@ -1,15 +1,15 @@
 package net.wyun.wcrs.wechat.po;
 
 /**
- * ƾ֤
- * 
+ *  凭证
+ *  
  * @author qikuo
  * @date 2017-2-28
  */
 public class Token {
-	// �ӿڷ���ƾ֤
+	// 接口访问凭证
 	private String accessToken;
-	// ƾ֤��Ч�ڣ���λ����
+	// 凭证有效期，单位：秒
 	private int expiresIn;
 
 	public String getAccessToken() {
