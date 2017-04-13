@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import net.wyun.wcrs.model.Product;
-import net.wyun.wcrs.model.ProductRepository;
+import net.wyun.wcrs.model.repo.ProductRepository;
 
 /**
  * @author michael
