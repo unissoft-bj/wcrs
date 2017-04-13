@@ -19,9 +19,24 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "product")
+@Table(name = "billing")
 public class Billing {
-	
+	/**
+	 * 
+	 * @param unionId, w_c_user id
+	 * @param upId, user_product id
+	 * @param percent, percent for bonus
+	 * @param amount, award amount
+	 * @param createT
+	 */
+	public Billing(String unionId, Long upId, Integer percent, BigDecimal amount, Date createT) {
+		this.unionId = unionId;
+		this.upId = upId;
+		this.percent = percent;
+		this.amount = amount;
+		this.createT = createT;
+	}
+
 	public Billing() { createT = new Date();	}
 
 	@Id
@@ -37,8 +52,18 @@ public class Billing {
 	private String unionId;
 	
 	@Column(name = "u_p_id", nullable = false)
-	private String upId;
+	private Long upId;
 	
+	private Integer percent;
+	
+	public Integer getPercent() {
+		return percent;
+	}
+
+	public void setPercent(Integer percent) {
+		this.percent = percent;
+	}
+
 	BigDecimal amount; //         numeric(15,2)       NOT NULL,
 	
 	@Column(name = "create_t")
@@ -60,11 +85,11 @@ public class Billing {
 		this.unionId = unionId;
 	}
 
-	public String getUpId() {
+	public Long getUpId() {
 		return upId;
 	}
 
-	public void setUpId(String upId) {
+	public void setUpId(Long upId) {
 		this.upId = upId;
 	}
 
