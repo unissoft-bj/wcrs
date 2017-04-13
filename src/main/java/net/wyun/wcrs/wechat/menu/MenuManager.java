@@ -22,7 +22,7 @@ public class MenuManager {
 	 * @return
 	 */
 	//人才库
-	private static Menu getMenu() {
+	public static Menu getMenu() {
 		//按钮1
 		ViewButton btn11 = new ViewButton();
 		btn11.setName("招聘登记");
@@ -78,7 +78,7 @@ public class MenuManager {
 		return menu;
 	}
 	//企管沙龙
-	private static Menu getMenu_qgsl() {
+	public static Menu getMenu_qgsl() {
 		//按钮1
 		ViewButton btn1 = new ViewButton();
 		btn1.setName("活动");
@@ -105,40 +105,5 @@ public class MenuManager {
 		
 		return menu;
 	}
-	public static void main(String[] args) {
-		// 第三方用户唯一凭证
-		String appId = CommonUtil.APPID;
-		// 第三方用户唯一凭证密钥
-		String appSecret = CommonUtil.APPSECRET;
-		// 第三方用户唯一凭证
-		String appId_qgsl = CommonUtil.APPID_qgsl;
-		// 第三方用户唯一凭证密钥
-		String appSecret_qgsl = CommonUtil.APPSECRET_qgsl;
-		
-		// 调用接口获取凭证
-		Token token = CommonUtil.getToken(appId, appSecret);
-		Token token_qgsl = CommonUtil.getToken_qgsl(appId_qgsl, appSecret_qgsl);
-		if (null != token) {
-			// 创建菜单
-			boolean result = MenuUtil.createMenu(getMenu(), token.getAccessToken());
-			// 判断菜单创建结果
-			if (result)
-				//log.info("菜单创建成功！");
-				System.out.println("菜单创建成功1");
-			else
-				//log.info("菜单创建失败！");
-				System.out.println("创建失败1");
-		}
-		if (null != token_qgsl) {
-			// 创建菜单
-			boolean result_qgsl = MenuUtil.createMenu(getMenu_qgsl(), token.getAccessToken());
-			// 判断菜单创建结果
-			if (result_qgsl)
-				//log.info("菜单创建成功！");
-				System.out.println("菜单创建成功2");
-			else
-				//log.info("菜单创建失败！");
-				System.out.println("创建失败2");	
-		}
-	}
+	
 }

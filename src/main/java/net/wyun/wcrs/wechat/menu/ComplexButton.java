@@ -1,4 +1,4 @@
-package com.dongyuan.weixin.menu;
+package net.wyun.wcrs.wechat.menu;
 
 
 /**
