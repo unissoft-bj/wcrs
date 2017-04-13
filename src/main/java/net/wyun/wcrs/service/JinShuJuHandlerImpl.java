@@ -7,15 +7,19 @@ import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import net.wyun.wcrs.controller.WechatController;
+import net.wyun.wcrs.model.PAUser;
 import net.wyun.wcrs.model.User;
-import net.wyun.wcrs.model.UserRepository;
 import net.wyun.wcrs.model.UserStatus;
+import net.wyun.wcrs.model.repo.PAUserRepository;
+import net.wyun.wcrs.model.repo.UserRepository;
 import net.wyun.wcrs.wechat.AdvancedUtil;
 
 /**
@@ -29,6 +33,9 @@ public class JinShuJuHandlerImpl implements JinShuJuHandler{
 	
 	@Autowired
 	UserRepository userRepo;
+	
+	@Autowired
+	PAUserRepository paUserRepo;
 	
 	@Autowired
 	SceneIdService sceneIdService;
@@ -51,26 +58,31 @@ public class JinShuJuHandlerImpl implements JinShuJuHandler{
 
 	    public void run() {
 	        try {
-	        	User u = userRepo.findByOpenID(oid);
-	    		if(null == u){
+	        	PAUser pau = paUserRepo.findByOpenId(oid);
+	    		if(null == pau){
 	    			throw new RuntimeException("user not exist for oid: " + oid);
 	    		}
-	    		
-	    		if( u.getSceneID() == 0){
-	    			int s_id = sceneIdService.nextSceneID();
-	    			u.setSceneID(s_id);
+	    		String paId = pau.getPaId();
+	    		if( pau.getSceneID() == 0){
+	    			
+	    			int s_id = sceneIdService.nextSceneID(paId);
+	    			pau.setSceneID(s_id);
 	    			
 	    			//get QR code
-	    			String accessToken = tokenService.getToken().getAccessToken();
+	    			String accessToken = tokenService.getToken(paId).getAccessToken();
 	    			String ticket = AdvancedUtil.createPermanentQRCode(accessToken, s_id);
 	    			
-	    			u.setTicket(ticket);
+	    			pau.setTicket(ticket);
 	    		}
 	    		
+	    		User u = pau.getUser();
 	    		u.setPhone(phone);
 	    		u.setStatus(UserStatus.REGISTERED);
 	    		u.setModify_t(new Date());
-	    		userRepo.save(u);
+	    		pau.setModify_t(new Date());
+	    		
+	    		updateUser(u, pau);
+	    		//userRepo.save(pau);
 	        	
 	        } catch (Exception e) {
 	            logger.error("", e);
@@ -82,6 +94,12 @@ public class JinShuJuHandlerImpl implements JinShuJuHandler{
 	public void handle(String openId, String phone) {
 		logger.info("process: oid -- {}, phone -- {}", openId, phone);
 		executor.execute(new Handler(openId, phone));
+	}
+	
+	@Transactional
+	private void updateUser(User u, PAUser pau){
+		userRepo.save(u);
+		paUserRepo.save(pau);
 	}
 
 }
