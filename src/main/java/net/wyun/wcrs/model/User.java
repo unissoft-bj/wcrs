@@ -10,17 +10,16 @@ import javax.persistence.Table;
 //import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name = "user_info")
+@Table(name = "w_c_user")
 //@JsonIgnoreProperties({"id", "password", "factor", "sent_to_server", "enabled", "macAccounts"})
 public class User {
 	
 	//字段	
 	@Id
-	String openID;
+	@Column(name = "union_id", nullable = false)
+	String unionId;
 	
-	@Column(name = "scene_id")
-	Integer sceneID; //（1-100000）		
-	Integer parent; //parent's scene_id
+	String parent; //parent's scene_id
 	
 	@Column(name = "nick_name")
 	String nickName;
@@ -37,14 +36,9 @@ public class User {
     private Date createt; //        //subscribe_time, 
 	
     private Date modify_t; //         datetime 
-	//subscribe_time		
-	String ticket;
 	
 	String language;
 	UserStatus status;
-	
-	@Column(name = "union_id", nullable = false)
-	private String unionId;
 	
 	private String phone;
 	
@@ -72,22 +66,11 @@ public class User {
 	public void setLanguage(String language) {
 		this.language = language;
 	}
-	public String getOpenID() {
-		return openID;
-	}
-	public void setOpenID(String openID) {
-		this.openID = openID;
-	}
-	public Integer getSceneID() {
-		return sceneID;
-	}
-	public void setSceneID(Integer sceneID) {
-		this.sceneID = sceneID;
-	}
-	public Integer getParent() {
+	
+	public String getParent() {
 		return parent;
 	}
-	public void setParent(Integer parent) {
+	public void setParent(String parent) {
 		this.parent = parent;
 	}
 	public String getNickName() {
@@ -138,12 +121,5 @@ public class User {
 	public void setModify_t(Date modify_t) {
 		this.modify_t = modify_t;
 	}
-	public String getTicket() {
-		return ticket;
-	}
-	public void setTicket(String ticket) {
-		this.ticket = ticket;
-	}
-	
 
 }
