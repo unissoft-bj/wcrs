@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.PostConstruct;
 
@@ -26,7 +28,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import net.wyun.wcrs.config.WechatProperties;
+import net.wyun.wcrs.model.PublicAccount;
+import net.wyun.wcrs.model.repo.PublicAccountRepository;
 import net.wyun.wcrs.wechat.CommonUtil;
+import net.wyun.wcrs.wechat.menu.MenuManager;
+import net.wyun.wcrs.wechat.menu.MenuUtil;
 import net.wyun.wcrs.wechat.po.Token;
 
 /**
@@ -42,7 +48,14 @@ public class TokenServiceImpl implements TokenService {
 	@Autowired
 	private WechatProperties wcrsProperties;
 	
-	private Token token;
+	ConcurrentMap<String, Token> paTokenMap = new ConcurrentHashMap<String, Token>();
+	Iterable<PublicAccount> publicAccounts;
+
+	
+	@Autowired
+	PublicAccountRepository paRepo;
+	
+	
 	
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 	
@@ -51,7 +64,11 @@ public class TokenServiceImpl implements TokenService {
 	public void updateToken() {
 		
 		logger.info("### [Token Svc] on " + dateFormat.format(new Date()));
-		token = CommonUtil.getToken("", "");
+		for(PublicAccount pa:publicAccounts){
+			Token token = CommonUtil.getToken(pa.getAppId(), pa.getAppSecret());
+			this.paTokenMap.put(pa.getPaId(), token);
+		}
+		
 		
 	}
 	
@@ -60,16 +77,47 @@ public class TokenServiceImpl implements TokenService {
 	@PostConstruct
     public void init() {
 		logger.info("token service: initialising ...");
-		CommonUtil.APPID = wcrsProperties.getAppId();
-		CommonUtil.APPSECRET = wcrsProperties.getAppSecret();
+		//CommonUtil.APPID = wcrsProperties.getAppId();
+		//CommonUtil.APPSECRET = wcrsProperties.getAppSecret();
+		publicAccounts = this.paRepo.findAll();
+		for(PublicAccount pa:publicAccounts){
+			logger.info("public account {} with id/key: {}/{}", pa.getPaId(), pa.getAppId(), pa.getAppSecret());
+		}
 		this.updateToken();
-		logger.info("token service appid: " + CommonUtil.APPID);
+		
+		//create menu
+		Token token = this.getToken(CommonUtil.APPID);
+		this.createMenu(token);
+		
+		logger.info("token service loaded successfully! ");
 	}
 
 	@Override
-	public Token getToken() {
-		return token;
+	public Token getToken(String paId) {
+		return paTokenMap.get(paId);
 	}
+	
+	private void createMenu(Token token) {
+		// 第三方用户唯一凭证
+		//String appId = CommonUtil.APPID;
+		// 第三方用户唯一凭证密钥
+		//String appSecret = CommonUtil.APPSECRET;
+		
+		// 调用接口获取凭证
+		//Token token = CommonUtil.getToken(appId, appSecret);
+		if (null != token) {
+			// 创建菜单
+			boolean result = MenuUtil.createMenu(MenuManager.getMenu(), token.getAccessToken());
+			// 判断菜单创建结果
+			if (result)
+				//log.info("菜单创建成功！");
+				System.out.println("菜单创建成功!");
+			else
+				//log.info("菜单创建失败！");
+				System.out.println("创建失败!");
+		}
+		
+}
 
 	
 }

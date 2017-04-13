@@ -12,5 +12,5 @@ import org.springframework.stereotype.Service;
 @Service
 public interface SceneIdService {
 
-	int nextSceneID();
+	int nextSceneID(String paId);
 }

@@ -7,5 +7,5 @@ import net.wyun.wcrs.wechat.po.Token;
 @Service
 public interface TokenService {
 
-	Token getToken();
+	Token getToken(String paId);
 }
