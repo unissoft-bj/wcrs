@@ -7,10 +7,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,11 +26,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import net.wyun.wcrs.jsj.JSJFormInfo;
 import net.wyun.wcrs.model.Gender;
+import net.wyun.wcrs.model.PAUser;
 import net.wyun.wcrs.model.User;
-import net.wyun.wcrs.model.UserRepository;
 import net.wyun.wcrs.model.UserStatus;
 import net.wyun.wcrs.model.WechatEvent;
-import net.wyun.wcrs.model.WechatEventRepository;
+import net.wyun.wcrs.model.repo.PAUserRepository;
+import net.wyun.wcrs.model.repo.UserRepository;
+import net.wyun.wcrs.model.repo.WechatEventRepository;
+import net.wyun.wcrs.service.TokenService;
 import net.wyun.wcrs.wechat.AdvancedUtil;
 import net.wyun.wcrs.wechat.CommonUtil;
 import net.wyun.wcrs.wechat.MessageUtil;
@@ -49,10 +54,16 @@ public class WechatController {
 	private static final Logger logger = LoggerFactory.getLogger(WechatController.class);
 	
 	@Autowired
+	PAUserRepository paUserRepo;
+	
+	@Autowired
 	UserRepository userRepo;
 	
 	@Autowired
 	WechatEventRepository weRepo;
+	
+	@Autowired
+	TokenService tokenService;
 	
 	@RequestMapping(value= "/wechat", method=RequestMethod.POST)
 	String saveUser(/*@RequestBody String data, */ HttpServletRequest request){
@@ -100,9 +111,8 @@ public class WechatController {
 							logger.info("eventKey: "+ wevt.getEventKey());
 							//QRCodeEvent qrCodeEvent = DaoFactory.getPersonDaoInstance().insertByopenid(baseEvent);
 //							QRCodeEvent qrCodeEvent = DaoFactory.getPersonDaoInstance().selectByopenid(baseEvent);
-							String APPID = CommonUtil.APPID;
-							String APPSECRET = CommonUtil.APPSECRET;
-							String accessToken = CommonUtil.getToken("APPID", "APPSECRET").getAccessToken();
+
+							String accessToken = tokenService.getToken(wevt.getToUserName()).getAccessToken();
 							WeixinUserInfo wx_user = AdvancedUtil.getUserInfo(accessToken, openid);
 							//获取用户openid放入数据库进行判断，如果存在不执行操作，如果不存在，则将用户信息写入数据库
 							if (openid != null) {
@@ -110,24 +120,41 @@ public class WechatController {
 								//查询openid
 								logger.info("openid:" + wx_user.getOpenId());
 								logger.info(wx_user.toString());
-								User temp = userRepo.findByOpenID(wx_user.getOpenId());
+								PAUser temp = paUserRepo.findByOpenId(wx_user.getOpenId());
 								
 								if(null != temp){
-									temp.setStatus(UserStatus.SUBSCRIBER);
+									User wxUser = temp.getUser();
+									wxUser.setStatus(UserStatus.SUBSCRIBER); //maybe re-subscribe
 									if(!wevt.getEventKey().isEmpty()){
 										int parent = MessageUtil.parseEventKey(wevt.getEventKey());
-										temp.setParent(parent);
+										logger.info("possible parent scene id: {}", parent);
+										//temp.setParent(parent);
 									}
 									temp.setModify_t(new Date());
-									userRepo.save(temp);
+									paUserRepo.save(temp);
 								}else{
+									PAUser paU = generatePAUser(wx_user);
+									paU.setPaId(wevt.getToUserName());
 									User user = fromWXUser(wx_user);
-									int parent = 1;  //default platform QR
-									if(!wevt.getEventKey().isEmpty()){
-										parent = MessageUtil.parseEventKey(wevt.getEventKey());
+									
+									//handle empty union_id, generate an uuid for the user
+									if(user.getUnionId().isEmpty()){
+										String unionId = uuid();
+										user.setUnionId(unionId);
 									}
-									user.setParent(parent);
-									this.userRepo.save(user);
+									
+									User parent = null;  //default platform QR
+									if(!wevt.getEventKey().isEmpty()){
+										int parentSceneId = MessageUtil.parseEventKey(wevt.getEventKey());
+										PAUser p = paUserRepo.findBySceneID(parentSceneId);
+										parent = p.getUser();
+									}else{
+										//platform, nothing
+										
+									}
+									user.setParent(parent==null?null:parent.getUnionId());
+									persistUser(paU, user);
+									logger.info("user with id: {} created successfully!", user.getUnionId());
 								}
 								
 //								if (openid.equals(DaoFactory.getPersonDaoInstance().selectByopenid(openid))) {
@@ -199,19 +226,36 @@ public class WechatController {
 		WechatEvent evt = new WechatEvent(toUserName, fromUserName, msgType, event, eventKey);
 		return evt;
 	}
+	
+	@Transactional
+	private void persistUser(PAUser paU, User u){
+		User user = userRepo.save(u);
+		paU.setUser(user);
+		this.paUserRepo.save(paU);
+	}
+	
+	
+    private PAUser generatePAUser(WeixinUserInfo wx_user) {
+        PAUser o = new PAUser();
+		
+		o.setOpenId(wx_user.getOpenId());
+		o.setSceneID(0);
+		o.setCreatet(new Date());
+		o.setTicket("");
+		//o.setUnionId(wx_user.getUnionid());
+		
+		return o;
+	}
 
 	/**
-	 * function to create a new user in user_info table
+	 * function to create a new user in w_c_user table
 	 * @param wx_user
 	 * @return
 	 */
 	private User fromWXUser(WeixinUserInfo wx_user) {
-		
         User o = new User();
 		
-		o.setOpenID(wx_user.getOpenId());
-		o.setSceneID(0);
-		o.setParent(0);
+		//o.setParent(0);
 		o.setNickName(wx_user.getNickname());
 		o.setGender(Gender.gender(wx_user.getSex()));
 		o.setCity(wx_user.getCity());
@@ -219,7 +263,6 @@ public class WechatController {
 		o.setCountry(wx_user.getCountry());
 		o.setHeadimgurl(wx_user.getHeadImgUrl());
 		o.setCreatet(new Date());
-		o.setTicket("");
 		o.setStatus(UserStatus.SUBSCRIBER);
 		o.setLanguage(wx_user.getLanguage());
 		o.setUnionId(wx_user.getUnionid());
@@ -227,6 +270,10 @@ public class WechatController {
 		return o;
 	}
 
+	private String uuid(){
+		UUID uniqueKey = UUID.randomUUID();
+		return uniqueKey.toString();
+	}
 	@RequestMapping(value= "/wechat", method=RequestMethod.GET)
 	void handShake(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		// 微信加密签名
