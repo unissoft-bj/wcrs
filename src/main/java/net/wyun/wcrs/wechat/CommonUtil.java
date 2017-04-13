@@ -109,7 +109,7 @@ public class CommonUtil {
 	 */
 	public static Token getToken(String appid, String appsecret) {
 		Token token = null;
-		String requestUrl = token_url.replace("APPID", APPID).replace("APPSECRET", APPSECRET);
+		String requestUrl = token_url.replace("APPID", appid).replace("APPSECRET", appsecret);
 		// 发起GET请求获取凭证
 		JSONObject jsonObject = httpsRequest(requestUrl, "GET", null);
 
