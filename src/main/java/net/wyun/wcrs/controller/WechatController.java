@@ -68,13 +68,14 @@ public class WechatController {
 	@RequestMapping(value= "/wechat", method=RequestMethod.POST)
 	String saveUser(/*@RequestBody String data, */ HttpServletRequest request){
 		logger.info("wechat data: ");
-		
+		String fromIp = request.getRemoteAddr();
 		// xml格式的消息数据
 				String respXml = null;
 				try {
 					// 调用parseXml方法解析请求消息
 					Map<String, String> requestMap = MessageUtil.parseXml(request);
 					WechatEvent wevt = event(requestMap);
+					wevt.setFromIp(fromIp);
 					String eventKey = wevt.getEventKey();
 					
 					QRCodeEvent baseEvent = new QRCodeEvent();
@@ -138,6 +139,7 @@ public class WechatController {
 									User user = fromWXUser(wx_user);
 									
 									//handle empty union_id, generate an uuid for the user
+									logger.warn("CANNOT get UNIONID, if it is system in production, report!!!!" );
 									if(user.getUnionId().isEmpty()){
 										String unionId = uuid();
 										user.setUnionId(unionId);
