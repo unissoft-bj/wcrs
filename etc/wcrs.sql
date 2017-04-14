@@ -99,7 +99,8 @@ CREATE TABLE if not exists affiliate (
     description     varchar(100)       NOT NULL DEFAULT '',
     create_t        datetime           DEFAULT NULL,	            #	记录时间
     foreign key    (product_id)        references product (id),
-    foreign key    (aff_node_id)       references w_c_user (union_id)
+    foreign key    (aff_node_id)       references w_c_user (union_id),
+    UNIQUE KEY     id_aff_product     (product_id, aff_node_id)
 )  DEFAULT CHARSET=utf8;
 
 ###############################################################
