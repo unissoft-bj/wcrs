@@ -42,9 +42,9 @@ public class UserController {
 	}
 	
 	@RequestMapping(value= "/user/{oid}", method=RequestMethod.GET)
-	User getUser(@PathVariable("oid") String openId){
+	PAUser getUser(@PathVariable("oid") String openId){
 		PAUser paU = paUserRepo.findByOpenId(openId);
-		return paU.getUser();
+		return paU;
 	}
 	
 	
