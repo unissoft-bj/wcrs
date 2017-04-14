@@ -86,8 +86,8 @@ public class TokenServiceImpl implements TokenService {
 		this.updateToken();
 		
 		//create menu
-		Token token = this.getToken(CommonUtil.APPID);
-		this.createMenu(token);
+		this.createMenuRecruiting();
+		createMenuSalon();
 		
 		logger.info("token service loaded successfully! ");
 	}
@@ -97,7 +97,10 @@ public class TokenServiceImpl implements TokenService {
 		return paTokenMap.get(paId);
 	}
 	
-	private void createMenu(Token token) {
+	private void createMenuRecruiting() {
+		String paId = "gh_d698ab97cae6";
+		Token token = this.getToken(paId);
+		logger.info("token: {}", token.getAccessToken());
 		// 第三方用户唯一凭证
 		//String appId = CommonUtil.APPID;
 		// 第三方用户唯一凭证密钥
@@ -111,13 +114,37 @@ public class TokenServiceImpl implements TokenService {
 			// 判断菜单创建结果
 			if (result)
 				//log.info("菜单创建成功！");
-				System.out.println("菜单创建成功!");
+				logger.info("Recruiting -- 菜单创建成功!");
 			else
 				//log.info("菜单创建失败！");
-				System.out.println("创建失败!");
+				logger.error("Recruiting -- 创建失败!");
 		}
 		
-}
+    }
+	
+	private void createMenuSalon() {
+		String paId = "gh_39bf79a08057";
+		Token token = this.getToken(paId);
+		// 第三方用户唯一凭证
+		//String appId = CommonUtil.APPID;
+		// 第三方用户唯一凭证密钥
+		//String appSecret = CommonUtil.APPSECRET;
+		
+		// 调用接口获取凭证
+		//Token token = CommonUtil.getToken(appId, appSecret);
+		if (null != token) {
+			// 创建菜单
+			boolean result = MenuUtil.createMenu(MenuManager.getMenu_qgsl(), token.getAccessToken());
+			// 判断菜单创建结果
+			if (result)
+				//log.info("菜单创建成功！");
+				logger.info("Salon -- 菜单创建成功!");
+			else
+				//log.info("菜单创建失败！");
+				logger.error("Salon -- 创建失败!");
+		}
+		
+    }
 
 	
 }
