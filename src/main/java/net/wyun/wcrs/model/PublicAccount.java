@@ -30,6 +30,8 @@ public class PublicAccount {
 	@Column(name = "app_secret")
 	String appSecret;
 	
+	String description;
+	
 	@Column(name = "create_t")
     private Date createT;
 	
@@ -58,6 +60,12 @@ public class PublicAccount {
 	}
 	public void setCreateT(Date createT) {
 		this.createT = createT;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 }
