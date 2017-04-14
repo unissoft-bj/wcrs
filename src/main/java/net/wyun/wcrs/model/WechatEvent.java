@@ -64,6 +64,17 @@ public class WechatEvent {
     
     @Column(name = "event_key", length=100)
     private String eventKey;
+    
+    @Column(name = "from_ip", length=15)
+    private String fromIp;
+
+	public String getFromIp() {
+		return fromIp;
+	}
+
+	public void setFromIp(String fromIp) {
+		this.fromIp = fromIp;
+	}
 
 	public String getToUserName() {
 		return toUserName;
