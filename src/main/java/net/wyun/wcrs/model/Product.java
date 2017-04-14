@@ -16,6 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * @author michael
  *
@@ -41,6 +43,7 @@ public class Product {
 		this.id = id;
 	}
 	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER, mappedBy = "product")
 	List<Affiliate> affiliates;
 	
