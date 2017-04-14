@@ -38,6 +38,7 @@ CREATE TABLE if not exists public_account (
     p_a_id          varchar(30)        primary key NOT NULL,
     app_id          varchar(20)        NOT NULL,
     app_secret      varchar(36)        NOT NULL,
+    description     varchar(60)        NOT NULL DEFAULT '',
     create_t        datetime           DEFAULT NULL	            #	记录时间
 )  DEFAULT CHARSET=utf8;
 
@@ -51,7 +52,6 @@ CREATE TABLE if not exists p_a_user (
     union_id       VARCHAR(36)       DEFAULT NULL,                  #   usage?
     create_t       datetime          DEFAULT NULL,	                #	记录时间
     modify_t       datetime          DEFAULT NULL,	                #	记录更新时间
-    status         smallint          NOT NULL DEFAULT 0,
     ticket         varchar(100)      DEFAULT NULL,	                #
     constraint     union_id_unique   UNIQUE (union_id),              #limit one union_id to one public account
     foreign key    (union_id)        references w_c_user(union_id),
@@ -69,6 +69,7 @@ CREATE TABLE if not exists p_a_event (
     msg_type        varchar(20)        NOT NULL DEFAULT '',
     event           varchar(20)        NOT NULL DEFAULT '',
     event_key       varchar(100)       NOT NULL DEFAULT '',
+    from_ip         varchar(15)        NOT NULL DEFAULT '',
     create_t        datetime           DEFAULT NULL	            #	记录时间
 )  DEFAULT CHARSET=utf8;
 
@@ -121,12 +122,13 @@ CREATE TABLE if not exists user_product (
 ###############################################################
 # billing:
 # in user_product table, each record generates
-# 4 trans: first, second, third, and affiliate root
+# at most 4 trans: first, second, third, and affiliate root
 ###############################################################
 CREATE TABLE if not exists billing (
     id             int unsigned        NOT NULL auto_increment primary key,
     union_id       VARCHAR(36)         NOT NULL,
     u_p_id         int unsigned        NOT NULL,
+    percent        smallint            NOT NULL,
     amount         numeric(15,2)       NOT NULL,
     create_t       datetime            DEFAULT NULL,
     foreign key    (union_id)          references w_c_user (union_id),
