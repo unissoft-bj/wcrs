@@ -34,7 +34,7 @@ public class AffiliateRepositoryTest extends BaseSpringTestRunner{
 	@Test
 	public void test() {
 		Affiliate af = new Affiliate();
-		af.setAffNodeId("88_bmasdasdsad6_2sgVt7hMZOPfL");
+		af.setAffNodeId("o6_bmasdasdsad6_2sgVt7hMZOPfL");
 		af.setDescription("first description for test");
 		af.setAffNodeName("test99");
 		af.setFirst(6);
@@ -49,7 +49,7 @@ public class AffiliateRepositoryTest extends BaseSpringTestRunner{
 		
 		product = productRepo.save(product);
 		Product p = productRepo.findOne(2L);
-		af.setProduct(p);
+		af.setProduct(product);
 		
 		
 		
