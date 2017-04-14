@@ -20,9 +20,9 @@ public class UserTest {
 	public void user2JsonTest() throws JsonProcessingException {
 		User o = new User();
 		
-		o.setOpenID("ff8081814da00e2b014da00f32260001");
-		o.setSceneID(888);
-		o.setParent(999);
+		//o.setOpenID("ff8081814da00e2b014da00f32260001");
+		//o.setSceneID(888);
+		o.setParent(null);
 		o.setNickName("test");
 		o.setGender(Gender.MALE);
 		o.setCity("北京");
@@ -30,9 +30,10 @@ public class UserTest {
 		o.setCountry("China");
 		o.setHeadimgurl("/head/image/test");
 		o.setCreatet(new Date());
-		o.setTicket("test ticket 1121");
+		//o.setTicket("test ticket 1121");
 		o.setStatus(UserStatus.REGISTERED);
 		o.setLanguage("cn");
+		o.setUnionId("ff8081814da00e2b014da00f32260001");
 		
 		String r_str = mapper.writeValueAsString(o);
 		System.out.println(r_str);

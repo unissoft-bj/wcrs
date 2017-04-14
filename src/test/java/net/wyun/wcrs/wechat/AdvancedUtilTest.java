@@ -63,7 +63,7 @@ public class AdvancedUtilTest {
 			// TODO Auto-generated method stub
 			String APPID = CommonUtil.APPID;
 			String APPSECRET = CommonUtil.APPSECRET;
-			String accessToken = CommonUtil.getToken("APPID", "APPSECRET").getAccessToken();
+			String accessToken = CommonUtil.getToken(APPID, APPSECRET).getAccessToken();
 			WeixinUserList weixinUserList = AdvancedUtil.getUserList(accessToken, "");
 			WeixinUserInfo weixinUserInfo = new WeixinUserInfo();
 			

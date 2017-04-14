@@ -10,8 +10,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.wyun.wcrs.BaseSpringTestRunner;
-import net.wyun.wcrs.model.UserRepository;
 import net.wyun.wcrs.model.UserStatus;
+import net.wyun.wcrs.model.repo.UserRepository;
 import net.wyun.wcrs.model.Gender;
 import net.wyun.wcrs.model.User;
 
@@ -21,28 +21,21 @@ public class UserRepositoryTest extends BaseSpringTestRunner {
 	@Autowired
 	private UserRepository userRepository;
 	
-	static String phone = "18699918882";
+	static String testPhone = "18699918882";
 	
 	@Test
-	public void saveOCLG(){
-		User o = new User();
-		o.setOpenID("ff8081814da00e2b014da00f32260002");
-		o.setSceneID(0);
-		o.setParent(1);
-		o.setNickName("test");
-		o.setGender(Gender.MALE);
-		o.setLanguage("en");
-		o.setCity("北京");
-		o.setProvince("上海");
-		o.setCountry("China");
-		o.setHeadimgurl("/head/image/test");
-		o.setCreatet(new Date());
-		o.setTicket("test ticket 1121");
-		o.setStatus(UserStatus.REGISTERED);
-		o.setUnionId("o6_bmasdasdsad6_2sgVt7hMZOPfL");
-		o.setPhone(phone);
+	public void saveUser(){
+		//String openId = "ff8081814da00e2b014da00f32260002";
+		String unionId = "o6_bmasdasdsad6_2sgVt7hMZOPfL";
+		User o = createUser(unionId, testPhone);
 		userRepository.save(o);
 		
+		unionId = "88_bmasdasdsad6_2sgVt7hMZOPfL";
+		o = createUser(unionId, "18666668888");
+		o.setParent("o6_bmasdasdsad6_2sgVt7hMZOPfL");
+		userRepository.save(o);
+		
+		findByPhone();
 	}
 	
 	@Test
@@ -54,13 +47,30 @@ public class UserRepositoryTest extends BaseSpringTestRunner {
 		}
 	}
 	
-	@Test
 	public void findByPhone() {
 		//assertThat(userRepository.findAll()).isNotEmpty();
-		User u = userRepository.findByPhone(phone);
-		System.out.println(u.getOpenID());
-		assertEquals(u.getOpenID(), "ff8081814da00e2b014da00f32260002");
+		User u = userRepository.findByPhone(testPhone);
+		System.out.println(u.getUnionId());
+		assertEquals(u.getUnionId(), "o6_bmasdasdsad6_2sgVt7hMZOPfL");
 			
+	}
+	
+	public User createUser(String unionId, String phone){
+		User o = new User();
+		
+		o.setNickName("test");
+		o.setGender(Gender.MALE);
+		o.setLanguage("en");
+		o.setCity("北京");
+		o.setProvince("上海");
+		o.setCountry("China");
+		o.setHeadimgurl("/head/image/test");
+		o.setCreatet(new Date());
+		o.setStatus(UserStatus.REGISTERED);
+		o.setUnionId(unionId);
+		o.setPhone(phone);
+		return o;
+		
 	}
 	
 }

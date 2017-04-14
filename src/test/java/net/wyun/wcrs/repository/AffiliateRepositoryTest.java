@@ -11,9 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import net.wyun.wcrs.BaseSpringTestRunner;
 import net.wyun.wcrs.model.Affiliate;
-import net.wyun.wcrs.model.AffiliateRepository;
 import net.wyun.wcrs.model.Product;
-import net.wyun.wcrs.model.ProductRepository;
+import net.wyun.wcrs.model.repo.AffiliateRepository;
+import net.wyun.wcrs.model.repo.ProductRepository;
 
 public class AffiliateRepositoryTest extends BaseSpringTestRunner{
 	
@@ -47,10 +47,11 @@ public class AffiliateRepositoryTest extends BaseSpringTestRunner{
 		product.setExpired(false);
 		product.setpType("test");
 		
-		Product p = productRepo.findOne(5L);
+		product = productRepo.save(product);
+		Product p = productRepo.findOne(2L);
 		af.setProduct(p);
 		
-		productRepo.save(product);
+		
 		
 		affiliateRepository.save(af);
 	}

@@ -1,6 +1,5 @@
 package net.wyun.wcrs.wechat.menu;
 
-import static org.junit.Assert.*;
 
 import org.junit.After;
 import org.junit.Before;
@@ -20,7 +19,7 @@ public class MenuManagerTest {
 	}
 
 	@Test
-	public void test() {
+	public void testCreateMenu() {
 			// 第三方用户唯一凭证
 			String appId = CommonUtil.APPID;
 			// 第三方用户唯一凭证密钥
