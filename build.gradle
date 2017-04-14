@@ -14,7 +14,7 @@ apply plugin: 'spring-boot'
 
 jar {
     baseName = 'wcrs-service'
-    version =  '0.0.6'
+    version =  '0.0.7'
 }
 
 eclipse {
