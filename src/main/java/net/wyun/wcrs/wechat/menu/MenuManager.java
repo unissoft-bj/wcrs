@@ -55,14 +55,22 @@ public class MenuManager {
 		btn23.setType("view");
 		btn23.setUrl("http://shop13308654.ddkwxd.com/tag/231300");
 		
+		//String appid = "wx179e17d128a005d0"; //qikuo
+		String appid = "wx479cc0c5b93538df";
 		//按钮3
-		String reurl= "http://zplsyx.iok.la/weixin3/oa.do";
+		String reurl= "http://59.110.113.110/wechat/oauth";
+		//reurl= "http://zplsyx.iok.la/weixin3/oa.do";
+		
 		String reurls = CommonUtil.urlEncodeUTF8(reurl);
+		String re_direct = "http://59.110.113.110/wechat/get-weixin-code.html?appid=" + appid + "&scope=snsapi_base&state=123&redirect_uri=" + reurls;
 		ViewButton btn3 = new ViewButton();
 		btn3.setName("推广加盟");
 		btn3.setType("view");
+		
+		//btn3.setUrl(re_direct);
 //		btn3.setUrl("http://zplsyx.iok.la/weixin3/JSP/tuiguang.jsp");
-		btn3.setUrl("https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx179e17d128a005d0&redirect_uri="+reurls+"&response_type=code&scope=snsapi_userinfo&state=123#wechat_redire");
+		btn3.setUrl("https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appid + "&redirect_uri="+reurls+"&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect");
+		
 		///weixin3/WebContent/JSP/tuiguang.jsp
 		ComplexButton mainBtn1 = new ComplexButton();
 		mainBtn1.setName("招聘入口");

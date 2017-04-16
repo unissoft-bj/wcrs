@@ -99,6 +99,7 @@ public class TokenServiceImpl implements TokenService {
 	
 	private void createMenuRecruiting() {
 		String paId = "gh_d698ab97cae6";
+		paId = "gh_d7901caa4f9b";
 		Token token = this.getToken(paId);
 		logger.info("token: {}", token.getAccessToken());
 		// 第三方用户唯一凭证
@@ -114,7 +115,7 @@ public class TokenServiceImpl implements TokenService {
 			// 判断菜单创建结果
 			if (result)
 				//log.info("菜单创建成功！");
-				logger.info("Recruiting -- 菜单创建成功!");
+				logger.info("Public account {} ===> Recruiting -- 菜单创建成功!", paId);
 			else
 				//log.info("菜单创建失败！");
 				logger.error("Recruiting -- 创建失败!");
@@ -138,7 +139,7 @@ public class TokenServiceImpl implements TokenService {
 			// 判断菜单创建结果
 			if (result)
 				//log.info("菜单创建成功！");
-				logger.info("Salon -- 菜单创建成功!");
+				logger.info("Public account {} ===> Salon -- 菜单创建成功!", paId);
 			else
 				//log.info("菜单创建失败！");
 				logger.error("Salon -- 创建失败!");
