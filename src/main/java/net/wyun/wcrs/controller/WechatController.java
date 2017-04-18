@@ -65,6 +65,15 @@ public class WechatController {
 	@Autowired
 	TokenService tokenService;
 	
+	@RequestMapping(value= "/oid", method=RequestMethod.GET)
+	String oid(/*@RequestBody String data, */ HttpServletRequest request) {
+		logger.info("OAuth wechat");
+		HttpSession session=request.getSession();  
+        String oid = (String) session.getAttribute("openId"); 
+        return oid;
+		
+	}
+	
 	@RequestMapping(value= "/wechat", method=RequestMethod.POST)
 	String saveUser(/*@RequestBody String data, */ HttpServletRequest request){
 		logger.info("wechat data: ");
