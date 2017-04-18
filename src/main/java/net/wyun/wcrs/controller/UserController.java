@@ -3,6 +3,8 @@
  */
 package net.wyun.wcrs.controller;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import net.wyun.wcrs.model.PAUser;
 import net.wyun.wcrs.model.User;
+import net.wyun.wcrs.model.mlm.Node;
 import net.wyun.wcrs.model.repo.PAUserRepository;
 import net.wyun.wcrs.model.repo.UserRepository;
 
@@ -51,6 +54,28 @@ public class UserController {
 	@RequestMapping(value= "/user/phone/{phoneNum}", method=RequestMethod.GET)
 	User getUserByPhone(@PathVariable("phoneNum") String phoneNum){
 		return userRepo.findByPhone(phoneNum);
+	}
+	
+	@RequestMapping(value= "/user/children/{unionId}", method=RequestMethod.GET)
+	Node<User> getChildren(@PathVariable("unionId") String unionId){
+		User u = userRepo.findOne(unionId);
+		Node<User> nodeU = new Node<User>(u);
+		this.addChildren(nodeU);
+		
+		//second level
+		List<Node<User>> children = nodeU.getChildren();
+		for(Node<User> child:children){
+			this.addChildren(child);
+		}
+		return nodeU;
+	}
+	
+	private void addChildren(Node<User> nu){
+		
+		String uid = nu.getData().getUnionId();
+		List<User> firstCh = userRepo.findByParent(uid);
+		nu.addChild(firstCh);
+		
 	}
 	
 }
