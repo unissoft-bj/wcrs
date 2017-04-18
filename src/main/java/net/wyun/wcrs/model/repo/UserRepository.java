@@ -29,5 +29,7 @@ public interface UserRepository extends CrudRepository<User, String>{
 	
 	User findByPhone(String phone);
 	
+	List<User> findByParent(String parentId);
+	
 	
 }
