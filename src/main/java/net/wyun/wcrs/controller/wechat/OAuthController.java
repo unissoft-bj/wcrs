@@ -5,6 +5,7 @@ package net.wyun.wcrs.controller.wechat;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
@@ -17,6 +18,7 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,7 +52,7 @@ import net.wyun.wcrs.wechat.po.WeixinUserInfo;
  *
  */
 @RequestMapping("/wechat")
-@RestController
+@Controller
 public class OAuthController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(OAuthController.class);
@@ -68,53 +70,39 @@ public class OAuthController {
 	TokenService tokenService;
 	
 	@RequestMapping(value= "/oauth", method=RequestMethod.GET)
-	String auth(/*@RequestBody String data, */ HttpServletRequest request){
+	String auth(/*@RequestBody String data, */ HttpServletRequest request) throws UnsupportedEncodingException{
 		logger.info("OAuth wechat");
+		
+		String openId = null;
+		request.setCharacterEncoding("utf-8");
 		
 		String code = request.getParameter("code");
         String state = request.getParameter("state");
         logger.info("code {} and state {}", code, state);
-        if (!"authdeny".equals(code)) {
+        if (null!= code && !"authdeny".equals(code)) {
+        	logger.info("OAuth successful.");
+        	
             // access_token
             WeixinOauth2Token weixinOauth2Token = AdvancedUtil.getOauth2AccessToken("wx479cc0c5b93538df", "9cef9bc43e6ab4a2feedbfd3bf5b1dff", code);
             String accessToken = weixinOauth2Token.getAccessToken();
-            String openId = weixinOauth2Token.getOpenId();
+            openId = weixinOauth2Token.getOpenId();
             SNSUserInfo snsUserInfo = AdvancedUtil.getSNSUserInfo(accessToken, openId);
             
             logger.info("openId {}", openId);
+            
+            HttpSession session=request.getSession();  
+            session.setAttribute("openId",openId);  
+            
             request.setAttribute("openId", openId);
             request.setAttribute("snsUserInfo", snsUserInfo);
             request.setAttribute("state", state);
+        }else{
+        	logger.error("Wechat Oauth failed!");
         }
 		
-		return "tuiguang";
+        HttpSession session=request.getSession();  
+        session.setAttribute("openId",openId==null?"notfound":openId);  
+		return "redirect:/index.html";
 	}
 	
-	
-	
-	@RequestMapping(value= "/wechat", method=RequestMethod.GET)
-	void handShake(HttpServletRequest request, HttpServletResponse response) throws IOException{
-		// 微信加密签名
-		String signature = request.getParameter("signature");
-		// 时间戳
-		String timestamp = request.getParameter("timestamp");
-		// 随机数
-		String nonce = request.getParameter("nonce");
-		// 随机字符串
-		String echostr = request.getParameter("echostr");
-		
-		logger.debug("signature, timestamp, echostr: " + signature + ", " + timestamp + ", " + echostr);
-
-		PrintWriter out = response.getWriter();
-		// 请求校验，若校验成功则原样返回echostr，表示接入成功，否则接入失败
-		if (SignUtil.checkSignature(signature, timestamp, nonce)) {
-			out.print(echostr);
-		}else{
-			logger.info("signature check fails!" + request.getRemoteHost());
-		}
-		out.close();
-		out = null;
-
-	}
-
 }
