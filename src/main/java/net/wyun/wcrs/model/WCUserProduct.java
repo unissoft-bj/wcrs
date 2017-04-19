@@ -19,9 +19,9 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "user_product")
-public class UserProduct {
+public class WCUserProduct {
 	
-	public UserProduct() {	}
+	public WCUserProduct() {	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

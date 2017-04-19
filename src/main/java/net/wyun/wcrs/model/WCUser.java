@@ -12,7 +12,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "w_c_user")
 //@JsonIgnoreProperties({"id", "password", "factor", "sent_to_server", "enabled", "macAccounts"})
-public class User {
+public class WCUser {
 	
 	//字段	
 	@Id
@@ -38,7 +38,7 @@ public class User {
     private Date modify_t; //         datetime 
 	
 	String language;
-	UserStatus status;
+	WCUserStatus status;
 	
 	private String phone;
 	
@@ -54,10 +54,10 @@ public class User {
 	public void setUnionId(String unionId) {
 		this.unionId = unionId;
 	}
-	public UserStatus getStatus() {
+	public WCUserStatus getStatus() {
 		return status;
 	}
-	public void setStatus(UserStatus status) {
+	public void setStatus(WCUserStatus status) {
 		this.status = status;
 	}
 	public String getLanguage() {

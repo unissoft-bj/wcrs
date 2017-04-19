@@ -29,9 +29,9 @@ public class PAUser {
 	private String unionId;
 	*/
 	
-	@ManyToOne(targetEntity=User.class)
+	@ManyToOne(targetEntity=WCUser.class)
 	@JoinColumn(name = "union_id", referencedColumnName="union_id", columnDefinition="VARCHAR(36)")
-	private User user;
+	private WCUser user;
 	
 	@Column(name = "create_t", nullable = false)
     private Date createt; //        //subscribe_time, 
@@ -85,10 +85,10 @@ public class PAUser {
 	public void setSceneID(Integer sceneID) {
 		this.sceneID = sceneID;
 	}
-	public User getUser() {
+	public WCUser getUser() {
 		return user;
 	}
-	public void setUser(User user) {
+	public void setUser(WCUser user) {
 		this.user = user;
 	}
 	
