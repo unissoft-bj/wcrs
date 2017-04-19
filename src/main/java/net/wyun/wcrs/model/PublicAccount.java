@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
+ * wechat public account
  * @author michael
  *
  */
