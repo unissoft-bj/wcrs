@@ -18,7 +18,7 @@ public class UserTest {
 
 	@Test
 	public void user2JsonTest() throws JsonProcessingException {
-		User o = new User();
+		WCUser o = new WCUser();
 		
 		//o.setOpenID("ff8081814da00e2b014da00f32260001");
 		//o.setSceneID(888);
@@ -31,7 +31,7 @@ public class UserTest {
 		o.setHeadimgurl("/head/image/test");
 		o.setCreatet(new Date());
 		//o.setTicket("test ticket 1121");
-		o.setStatus(UserStatus.REGISTERED);
+		o.setStatus(WCUserStatus.REGISTERED);
 		o.setLanguage("cn");
 		o.setUnionId("ff8081814da00e2b014da00f32260001");
 		
