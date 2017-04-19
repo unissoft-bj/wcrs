@@ -50,7 +50,7 @@ public class Affiliate {
     @Column(name = "aff_node_p")
     private Integer affNodeP;           //aff_node_p      smallint           NOT NULL DEFAULT 10,
     @Column(name = "aff_node_id")
-    private String affNodeId; //aff_node_id     varchar(32)        NOT NULL,
+    private String affNodeId;           //union id in WCUser
     @Column(name = "aff_node_name")
     private String affNodeName; //aff_node_name   varchar(32)        DEFAULT NULL,
 
