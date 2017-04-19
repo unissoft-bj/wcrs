@@ -3,9 +3,7 @@
  */
 package net.wyun.wcrs.controller;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,9 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import net.wyun.wcrs.model.Affiliate;
-import net.wyun.wcrs.model.Product;
 import net.wyun.wcrs.model.repo.AffiliateRepository;
-import net.wyun.wcrs.model.repo.ProductRepository;
 
 /**
  * @author michael
@@ -31,7 +27,7 @@ import net.wyun.wcrs.model.repo.ProductRepository;
 @RestController
 public class AffiliateController {
 	
-private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+private static final Logger logger = LoggerFactory.getLogger(AffiliateController.class);
 	
 	@Autowired
 	AffiliateRepository affiliateRepo;
