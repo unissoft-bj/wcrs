@@ -29,7 +29,7 @@ import net.wyun.wcrs.model.repo.ProductRepository;
 @RestController
 public class ProductController {
 	
-private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 	
 	@Autowired
 	ProductRepository productRepo;
