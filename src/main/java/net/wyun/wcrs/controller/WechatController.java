@@ -27,11 +27,11 @@ import org.springframework.web.bind.annotation.RestController;
 import net.wyun.wcrs.jsj.JSJFormInfo;
 import net.wyun.wcrs.model.Gender;
 import net.wyun.wcrs.model.PAUser;
-import net.wyun.wcrs.model.User;
-import net.wyun.wcrs.model.UserStatus;
+import net.wyun.wcrs.model.WCUser;
+import net.wyun.wcrs.model.WCUserStatus;
 import net.wyun.wcrs.model.WechatEvent;
 import net.wyun.wcrs.model.repo.PAUserRepository;
-import net.wyun.wcrs.model.repo.UserRepository;
+import net.wyun.wcrs.model.repo.WCUserRepository;
 import net.wyun.wcrs.model.repo.WechatEventRepository;
 import net.wyun.wcrs.service.TokenService;
 import net.wyun.wcrs.wechat.AdvancedUtil;
@@ -57,7 +57,7 @@ public class WechatController {
 	PAUserRepository paUserRepo;
 	
 	@Autowired
-	UserRepository userRepo;
+	WCUserRepository userRepo;
 	
 	@Autowired
 	WechatEventRepository weRepo;
@@ -133,8 +133,8 @@ public class WechatController {
 								PAUser temp = paUserRepo.findByOpenId(wx_user.getOpenId());
 								
 								if(null != temp){
-									User wxUser = temp.getUser();
-									wxUser.setStatus(UserStatus.SUBSCRIBER); //maybe re-subscribe
+									WCUser wxUser = temp.getUser();
+									wxUser.setStatus(WCUserStatus.SUBSCRIBER); //maybe re-subscribe
 									if(!wevt.getEventKey().isEmpty()){
 										int parent = MessageUtil.parseEventKey(wevt.getEventKey());
 										logger.info("possible parent scene id: {}", parent);
@@ -145,16 +145,17 @@ public class WechatController {
 								}else{
 									PAUser paU = generatePAUser(wx_user);
 									paU.setPaId(wevt.getToUserName());
-									User user = fromWXUser(wx_user);
+									WCUser user = fromWXUser(wx_user);
 									
-									//handle empty union_id, generate an uuid for the user
-									logger.warn("CANNOT get UNIONID, if it is system in production, report!!!!" );
 									if(user.getUnionId().isEmpty()){
+										//handle empty union_id, generate an uuid for the user
+										logger.warn("CANNOT get UNIONID, if it is system in production, report!!!!" );
 										String unionId = uuid();
+										logger.warn("generate unionId {}", unionId);
 										user.setUnionId(unionId);
 									}
 									
-									User parent = null;  //default platform QR
+									WCUser parent = null;  //default platform QR
 									if(!wevt.getEventKey().isEmpty()){
 										int parentSceneId = MessageUtil.parseEventKey(wevt.getEventKey());
 										PAUser p = paUserRepo.findBySceneID(parentSceneId);
@@ -239,8 +240,8 @@ public class WechatController {
 	}
 	
 	@Transactional
-	private void persistUser(PAUser paU, User u){
-		User user = userRepo.save(u);
+	private void persistUser(PAUser paU, WCUser u){
+		WCUser user = userRepo.save(u);
 		paU.setUser(user);
 		this.paUserRepo.save(paU);
 	}
@@ -263,8 +264,8 @@ public class WechatController {
 	 * @param wx_user
 	 * @return
 	 */
-	private User fromWXUser(WeixinUserInfo wx_user) {
-        User o = new User();
+	private WCUser fromWXUser(WeixinUserInfo wx_user) {
+        WCUser o = new WCUser();
 		
 		//o.setParent(0);
 		o.setNickName(wx_user.getNickname());
@@ -274,7 +275,7 @@ public class WechatController {
 		o.setCountry(wx_user.getCountry());
 		o.setHeadimgurl(wx_user.getHeadImgUrl());
 		o.setCreatet(new Date());
-		o.setStatus(UserStatus.SUBSCRIBER);
+		o.setStatus(WCUserStatus.SUBSCRIBER);
 		o.setLanguage(wx_user.getLanguage());
 		o.setUnionId(wx_user.getUnionid());
 		
