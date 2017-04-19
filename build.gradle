@@ -11,16 +11,40 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'spring-boot'
 //apply plugin: 'war'
+apply plugin: 'maven-publish'
 
+
+version =  '0.0.8'
 jar {
     baseName = 'wcrs-service'
-    version =  '0.0.8'
 }
 
 eclipse {
     classpath {
         downloadJavadoc = true
         downloadSources = true
+    }
+}
+
+task domainLibJar(type: Jar, dependsOn: compileJava) {
+    from sourceSets.main.output.classesDir
+    include '**/model/**/*'
+	manifest {
+        attributes 'Implementation-Title': 'wcrs-domain',
+        	'Implementation-Version': version
+    }
+    baseName = project.name + '-domain'
+    includeEmptyDirs = false
+}
+
+publishing {
+    publications {
+        api(MavenPublication) {
+            groupId 'net.wyun.wcrs'
+            artifactId 'wcrs-domain'
+
+            artifact domainLibJar
+        }
     }
 }
 
