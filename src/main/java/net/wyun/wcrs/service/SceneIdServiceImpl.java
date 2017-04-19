@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 import net.wyun.wcrs.model.PublicAccount;
 import net.wyun.wcrs.model.repo.PAUserRepository;
 import net.wyun.wcrs.model.repo.PublicAccountRepository;
-import net.wyun.wcrs.model.repo.UserRepository;
 
 @Component
 public class SceneIdServiceImpl implements SceneIdService {
