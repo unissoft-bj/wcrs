@@ -16,10 +16,10 @@ import org.springframework.stereotype.Component;
 
 import net.wyun.wcrs.controller.WechatController;
 import net.wyun.wcrs.model.PAUser;
-import net.wyun.wcrs.model.User;
-import net.wyun.wcrs.model.UserStatus;
+import net.wyun.wcrs.model.WCUser;
+import net.wyun.wcrs.model.WCUserStatus;
 import net.wyun.wcrs.model.repo.PAUserRepository;
-import net.wyun.wcrs.model.repo.UserRepository;
+import net.wyun.wcrs.model.repo.WCUserRepository;
 import net.wyun.wcrs.wechat.AdvancedUtil;
 
 /**
@@ -32,7 +32,7 @@ public class JinShuJuHandlerImpl implements JinShuJuHandler{
 	private static final Logger logger = LoggerFactory.getLogger(JinShuJuHandlerImpl.class);
 	
 	@Autowired
-	UserRepository userRepo;
+	WCUserRepository userRepo;
 	
 	@Autowired
 	PAUserRepository paUserRepo;
@@ -75,9 +75,9 @@ public class JinShuJuHandlerImpl implements JinShuJuHandler{
 	    			pau.setTicket(ticket);
 	    		}
 	    		
-	    		User u = pau.getUser();
+	    		WCUser u = pau.getUser();
 	    		u.setPhone(phone);
-	    		u.setStatus(UserStatus.REGISTERED);
+	    		u.setStatus(WCUserStatus.REGISTERED);
 	    		u.setModify_t(new Date());
 	    		pau.setModify_t(new Date());
 	    		
@@ -97,7 +97,7 @@ public class JinShuJuHandlerImpl implements JinShuJuHandler{
 	}
 	
 	@Transactional
-	private void updateUser(User u, PAUser pau){
+	private void updateUser(WCUser u, PAUser pau){
 		userRepo.save(u);
 		paUserRepo.save(pau);
 	}
