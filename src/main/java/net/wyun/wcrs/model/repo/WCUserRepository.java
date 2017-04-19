@@ -12,24 +12,24 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
-import net.wyun.wcrs.model.User;
+import net.wyun.wcrs.model.WCUser;
 
 /**
  * @author Xuecheng
  *
  */
-public interface UserRepository extends CrudRepository<User, String>{
+public interface WCUserRepository extends CrudRepository<WCUser, String>{
 	
 	@Modifying
 	@Transactional
-	@Query("DELETE FROM User a WHERE (a.createt > :cutOff)")
+	@Query("DELETE FROM WCUser a WHERE (a.createt > :cutOff)")
 	int removeByCreate_tGreaterThan(@Param("cutOff") Date cutOff);
 	
-	List<User> deleteByCreatetAfter(@Param("cutOff") Date cutOff);
+	List<WCUser> deleteByCreatetAfter(@Param("cutOff") Date cutOff);
 	
-	User findByPhone(String phone);
+	WCUser findByPhone(String phone);
 	
-	List<User> findByParent(String parentId);
+	List<WCUser> findByParent(String parentId);
 	
 	
 }

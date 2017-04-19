@@ -23,13 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 import net.wyun.wcrs.model.Affiliate;
 import net.wyun.wcrs.model.Billing;
 import net.wyun.wcrs.model.Product;
-import net.wyun.wcrs.model.User;
-import net.wyun.wcrs.model.UserProduct;
+import net.wyun.wcrs.model.WCUser;
+import net.wyun.wcrs.model.WCUserProduct;
 import net.wyun.wcrs.model.repo.AffiliateRepository;
 import net.wyun.wcrs.model.repo.BillingRepository;
 import net.wyun.wcrs.model.repo.ProductRepository;
-import net.wyun.wcrs.model.repo.UserProductRepository;
-import net.wyun.wcrs.model.repo.UserRepository;
+import net.wyun.wcrs.model.repo.WCUserProductRepository;
+import net.wyun.wcrs.model.repo.WCUserRepository;
 
 /**
  * @author michael
@@ -38,15 +38,15 @@ import net.wyun.wcrs.model.repo.UserRepository;
 @CrossOrigin
 @RequestMapping("/secure")
 @RestController
-public class UserProductController {
+public class WCUserProductController {
 	
-private static final Logger logger = LoggerFactory.getLogger(UserProductController.class);
-	
-	@Autowired
-	UserProductRepository userProductRepo;
+private static final Logger logger = LoggerFactory.getLogger(WCUserProductController.class);
 	
 	@Autowired
-	UserRepository userRepo;
+	WCUserProductRepository userProductRepo;
+	
+	@Autowired
+	WCUserRepository userRepo;
 	
 	@Autowired
 	ProductRepository productRepo;
@@ -58,16 +58,16 @@ private static final Logger logger = LoggerFactory.getLogger(UserProductControll
 	BillingRepository billingRepo;
 	
 	@RequestMapping(value= "/userproduct", method=RequestMethod.POST)
-	UserProduct saveProduct(@RequestBody UserProduct up){
+	WCUserProduct saveProduct(@RequestBody WCUserProduct up){
 		up.setCreateT(new Date());
-		UserProduct userP = userProductRepo.save(up);
+		WCUserProduct userP = userProductRepo.save(up);
 		Map<Integer, String> distMap = distribute(userP);
 		
 		return userP;
 	}
 	
 	@RequestMapping(value= "/userproduct/uid/{unionid}", method=RequestMethod.GET)
-	List<UserProduct> retrieveUserProduct(@PathVariable("unionid") String unionid){
+	List<WCUserProduct> retrieveUserProduct(@PathVariable("unionid") String unionid){
 		return userProductRepo.findByUnionId(unionid);
 	}
 	
@@ -76,11 +76,11 @@ private static final Logger logger = LoggerFactory.getLogger(UserProductControll
 		return "$25.88";
 	}
 	
-	private Map<Integer, String> distribute(UserProduct up){
+	private Map<Integer, String> distribute(WCUserProduct up){
 		Map<Integer, String> distMap = new HashMap<Integer, String>();
 		
 		String unionId = up.getUnionId();
-		User u = userRepo.findOne(unionId);
+		WCUser u = userRepo.findOne(unionId);
 		
 		Long productId = up.getProductId();
 		Product p = productRepo.findOne(productId);
@@ -127,7 +127,7 @@ private static final Logger logger = LoggerFactory.getLogger(UserProductControll
 		return null;
 	}
 	
-	private void process(Map<Integer, String> distMap, Affiliate root, UserProduct up) {
+	private void process(Map<Integer, String> distMap, Affiliate root, WCUserProduct up) {
 		BigDecimal OneHundred = new BigDecimal(100);
 		Set<Integer> keys =distMap.keySet();
 		if(keys.size() == 1){  // 1, root takes all
