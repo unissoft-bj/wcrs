@@ -29,11 +29,11 @@ import org.springframework.web.bind.annotation.RestController;
 import net.wyun.wcrs.jsj.JSJFormInfo;
 import net.wyun.wcrs.model.Gender;
 import net.wyun.wcrs.model.PAUser;
-import net.wyun.wcrs.model.User;
-import net.wyun.wcrs.model.UserStatus;
+import net.wyun.wcrs.model.WCUser;
+import net.wyun.wcrs.model.WCUserStatus;
 import net.wyun.wcrs.model.WechatEvent;
 import net.wyun.wcrs.model.repo.PAUserRepository;
-import net.wyun.wcrs.model.repo.UserRepository;
+import net.wyun.wcrs.model.repo.WCUserRepository;
 import net.wyun.wcrs.model.repo.WechatEventRepository;
 import net.wyun.wcrs.service.TokenService;
 import net.wyun.wcrs.wechat.AdvancedUtil;
@@ -61,7 +61,7 @@ public class OAuthController {
 	PAUserRepository paUserRepo;
 	
 	@Autowired
-	UserRepository userRepo;
+	WCUserRepository userRepo;
 	
 	@Autowired
 	WechatEventRepository weRepo;
@@ -69,9 +69,10 @@ public class OAuthController {
 	@Autowired
 	TokenService tokenService;
 	
+	private final static String DENIED = "authdeny";
 	@RequestMapping(value= "/oauth", method=RequestMethod.GET)
 	String auth(/*@RequestBody String data, */ HttpServletRequest request) throws UnsupportedEncodingException{
-		logger.info("OAuth wechat");
+		logger.info("Wechat OAuth from {}", request.getRemoteAddr());
 		
 		String openId = null;
 		request.setCharacterEncoding("utf-8");
@@ -79,11 +80,21 @@ public class OAuthController {
 		String code = request.getParameter("code");
         String state = request.getParameter("state");
         logger.info("code {} and state {}", code, state);
-        if (null!= code && !"authdeny".equals(code)) {
+        if(null == code){
+        	throw new RuntimeException("wechat authorization error, null value code returned!!!");
+        }
+        if (!DENIED.equals(code)) {
         	logger.info("OAuth successful.");
         	
-            // access_token
-            WeixinOauth2Token weixinOauth2Token = AdvancedUtil.getOauth2AccessToken("wx479cc0c5b93538df", "9cef9bc43e6ab4a2feedbfd3bf5b1dff", code);
+            // access_token verification to wechat server
+        	WeixinOauth2Token weixinOauth2Token = null;
+        	try{
+        		weixinOauth2Token = AdvancedUtil.getOauth2AccessToken("wx479cc0c5b93538df", "9cef9bc43e6ab4a2feedbfd3bf5b1dff", code);
+        	}catch (Exception e) {
+        		logger.error("获取网页授权凭证失败", e);
+        		throw new RuntimeException("wechat authorization error, 获取网页授权凭证失败!!!");
+			}
+            
             String accessToken = weixinOauth2Token.getAccessToken();
             openId = weixinOauth2Token.getOpenId();
             SNSUserInfo snsUserInfo = AdvancedUtil.getSNSUserInfo(accessToken, openId);
@@ -97,12 +108,30 @@ public class OAuthController {
             request.setAttribute("snsUserInfo", snsUserInfo);
             request.setAttribute("state", state);
         }else{
-        	logger.error("Wechat Oauth failed!");
+        	throw new RuntimeException("wechat authorization error, authorization denied!!!");
         }
 		
-        HttpSession session=request.getSession();  
-        session.setAttribute("openId",openId==null?"notfound":openId);  
-		return "redirect:/index.html";
+        if(openId == null){
+        	//go to error page
+        	throw new RuntimeException("wechat authorization error, null openId!!!");
+        }
+        
+        PAUser paU = this.paUserRepo.findByOpenId(openId);
+        if(null == paU) {
+        	throw new RuntimeException("wechat authorization error, paUser for openId not exist!!!");
+        }
+        
+        if(paU.getUser().getStatus() == WCUserStatus.REGISTERED){
+        	//to user page
+        	HttpSession session=request.getSession();  
+            session.setAttribute("openId",openId==null?"your oid not found":openId);  
+    		return "redirect:/index.html";
+        }else{
+        	String redirectUrl = "https://jinshuju.net/f/JN3P8g";
+        	return "redirect:" + redirectUrl;
+        }
+        
+        
 	}
 	
 }
