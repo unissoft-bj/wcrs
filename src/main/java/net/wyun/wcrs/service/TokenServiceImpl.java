@@ -88,6 +88,7 @@ public class TokenServiceImpl implements TokenService {
 		//create menu
 		this.createMenuRecruiting();
 		createMenuSalon();
+		createMenuQHDRecruiting();
 		
 		logger.info("token service loaded successfully! ");
 	}
@@ -112,6 +113,33 @@ public class TokenServiceImpl implements TokenService {
 		if (null != token) {
 			// 创建菜单
 			boolean result = MenuUtil.createMenu(MenuManager.getMenu(), token.getAccessToken());
+			// 判断菜单创建结果
+			if (result)
+				//log.info("菜单创建成功！");
+				logger.info("Public account {} ===> Recruiting -- 菜单创建成功!", paId);
+			else
+				//log.info("菜单创建失败！");
+				logger.error("Recruiting -- 创建失败!");
+		}
+		
+    }
+	
+	
+	private void createMenuQHDRecruiting() {
+		String paId = "gh_d698ab97cae6";
+		paId = "gh_d6f948a5a26b";
+		Token token = this.getToken(paId);
+		logger.info("token: {}", token.getAccessToken());
+		// 第三方用户唯一凭证
+		//String appId = CommonUtil.APPID;
+		// 第三方用户唯一凭证密钥
+		//String appSecret = CommonUtil.APPSECRET;
+		
+		// 调用接口获取凭证
+		//Token token = CommonUtil.getToken(appId, appSecret);
+		if (null != token) {
+			// 创建菜单
+			boolean result = MenuUtil.createMenu(MenuManager.getMenu_qhdrck(), token.getAccessToken());
 			// 判断菜单创建结果
 			if (result)
 				//log.info("菜单创建成功！");
