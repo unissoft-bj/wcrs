@@ -143,7 +143,7 @@ CREATE TABLE if not exists billing (
 create table account (
     id int unsigned not null auto_increment primary key,
     username varchar(50) not null,
-    password varchar(50) not null,
+    password varchar(72) not null,
     first_name varchar(50) not null,
     last_name varchar(50) not null,
     phone varchar(50) not null,
