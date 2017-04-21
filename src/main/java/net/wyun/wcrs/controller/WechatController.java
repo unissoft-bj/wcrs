@@ -117,7 +117,7 @@ public class WechatController {
 							String openid = baseEvent.getFromUserName();
 							HttpSession session = request.getSession();
 							session.setAttribute("openID", openid);
-							logger.info("openid: " + openid);
+							logger.info("openid: {}, paId: {}", openid, wevt.getToUserName());
 							logger.info("eventKey: "+ wevt.getEventKey());
 							//QRCodeEvent qrCodeEvent = DaoFactory.getPersonDaoInstance().insertByopenid(baseEvent);
 //							QRCodeEvent qrCodeEvent = DaoFactory.getPersonDaoInstance().selectByopenid(baseEvent);
@@ -132,17 +132,18 @@ public class WechatController {
 								logger.info(wx_user.toString());
 								PAUser temp = paUserRepo.findByOpenId(wx_user.getOpenId());
 								
-								if(null != temp){
+								if(null != temp){ //existing
 									WCUser wxUser = temp.getUser();
 									wxUser.setStatus(WCUserStatus.SUBSCRIBER); //maybe re-subscribe
 									if(!wevt.getEventKey().isEmpty()){
 										int parent = MessageUtil.parseEventKey(wevt.getEventKey());
 										logger.info("possible parent scene id: {}", parent);
-										//temp.setParent(parent);
+										//temp.setParent(parent);  //parent should be set during the first time registration
 									}
 									temp.setModify_t(new Date());
 									paUserRepo.save(temp);
 								}else{
+									// not exist in DB, p_a_user table
 									PAUser paU = generatePAUser(wx_user);
 									paU.setPaId(wevt.getToUserName());
 									WCUser user = fromWXUser(wx_user);
@@ -152,21 +153,25 @@ public class WechatController {
 										logger.warn("CANNOT get UNIONID, if it is system in production, report!!!!" );
 										String unionId = uuid();
 										logger.warn("generate unionId {}", unionId);
-										user.setUnionId(unionId);
+										user.setUnionId(unionId + "-generated");
 									}
 									
-									WCUser parent = null;  //default platform QR
-									if(!wevt.getEventKey().isEmpty()){
-										int parentSceneId = MessageUtil.parseEventKey(wevt.getEventKey());
-										PAUser p = paUserRepo.findBySceneID(parentSceneId);
-										parent = p.getUser();
+									//if WCUser for this open id exists already
+									String paUserUnionId = user.getUnionId();
+									WCUser wcU = userRepo.findOne(paUserUnionId);
+									if(null != wcU){
+										//WCUser already in DB from other Public Account already
+										logger.info("WCUser already exist for unionId: {}", paUserUnionId);
+										paUserRepo.save(paU);
+										logger.info("paU with id: {} created successfully!", user.getUnionId());
 									}else{
-										//platform, nothing
-										
+										//need create new WCUser in DB for this UnionId
+										WCUser parent = findParent(wevt);  
+										user.setParent(parent==null?null:parent.getUnionId());
+										persistUser(paU, user);
+										logger.info("paU/wcU with id: {} created successfully!", user.getUnionId());
 									}
-									user.setParent(parent==null?null:parent.getUnionId());
-									persistUser(paU, user);
-									logger.info("user with id: {} created successfully!", user.getUnionId());
+									
 								}
 								
 //								if (openid.equals(DaoFactory.getPersonDaoInstance().selectByopenid(openid))) {
@@ -218,6 +223,17 @@ public class WechatController {
 	}
 	
 	
+	private WCUser findParent(WechatEvent wevt) {
+
+		WCUser parent = null;
+		if(!wevt.getEventKey().isEmpty()){
+			int parentSceneId = MessageUtil.parseEventKey(wevt.getEventKey());
+			PAUser p = paUserRepo.findBySceneID(parentSceneId);
+			parent = p.getUser();
+		}
+		return parent;
+	}
+
 	private WechatEvent event(Map<String, String> requestMap) {
 
 		// 发送方帐号
