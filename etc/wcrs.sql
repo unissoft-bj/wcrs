@@ -108,9 +108,9 @@ CREATE TABLE if not exists affiliate (
 ###############################################################
 
 ###############################################################
-# user_product
+# wcuser_product
 ###############################################################
-CREATE TABLE if not exists user_product (
+CREATE TABLE if not exists wcuser_product (
     id             int unsigned        NOT NULL auto_increment primary key,
     union_id       VARCHAR(36)         NOT NULL,
     product_id     int unsigned        NOT NULL,
@@ -136,6 +136,41 @@ CREATE TABLE if not exists billing (
     foreign key    (u_p_id)            references user_product (id)
 )  DEFAULT CHARSET=utf8;
 
+###############################################################
+# account:
+# user account to manage wcrs
+###############################################################
+create table account (
+    id int unsigned not null auto_increment primary key,
+    username varchar(50) not null,
+    password varchar(50) not null,
+    first_name varchar(50) not null,
+    last_name varchar(50) not null,
+    phone varchar(50) not null,
+    enabled boolean not null,
+    unique index account_idx1 (username)
+) engine = InnoDb;
 
+###############################################################
+# role:
+# user role to manage access control
+###############################################################
+create table role (
+    id smallint unsigned not null auto_increment primary key,
+    name varchar(50) not null
+) engine = InnoDb;
+
+###############################################################
+# account_role:
+# user role to manage access control
+###############################################################
+create table account_role (
+    id int unsigned not null auto_increment primary key,
+    account_id int unsigned not null,
+    role_id smallint unsigned not null,
+    foreign key (account_id) references account (id),
+    foreign key (role_id) references role (id),
+    unique index account_role_idx1 (account_id, role_id)
+) engine = InnoDb;
 
 
