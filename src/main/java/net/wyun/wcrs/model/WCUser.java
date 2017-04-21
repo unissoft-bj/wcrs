@@ -8,6 +8,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 //import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+/**
+ * WCUser  --> unique WeChat user, identified by unionId
+ * @author michael
+ *
+ */
 
 @Entity
 @Table(name = "w_c_user")

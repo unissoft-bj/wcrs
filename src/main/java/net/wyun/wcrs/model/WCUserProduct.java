@@ -18,7 +18,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "user_product")
+@Table(name = "wcuser_product")
 public class WCUserProduct {
 	
 	public WCUserProduct() {	}

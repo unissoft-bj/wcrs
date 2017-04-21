@@ -9,6 +9,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+/**
+ * public account user --> unique user binding with a public account
+ * WCUser   --> PAUser is 1 --> M relationship
+ * @author michael
+ *
+ */
 
 @Entity
 @Table(name = "p_a_user")
