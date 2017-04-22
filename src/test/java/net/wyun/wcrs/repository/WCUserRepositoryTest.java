@@ -16,7 +16,7 @@ import net.wyun.wcrs.model.Gender;
 import net.wyun.wcrs.model.WCUser;
 
 
-public class UserRepositoryTest extends BaseSpringTestRunner {
+public class WCUserRepositoryTest extends BaseSpringTestRunner {
 	
 	@Autowired
 	private WCUserRepository userRepository;
