@@ -1,0 +1,31 @@
+mysql> SELECT * FROM information_schema.TABLE_CONSTRAINTS 
+    -> WHERE information_schema.TABLE_CONSTRAINTS.CONSTRAINT_TYPE = 'FOREIGN KEY' 
+    -> AND information_schema.TABLE_CONSTRAINTS.TABLE_SCHEMA = 'wcrs'
+    -> AND information_schema.TABLE_CONSTRAINTS.TABLE_NAME = 'p_a_user';
+ERROR 2006 (HY000): MySQL server has gone away
+No connection. Trying to reconnect...
+Connection id:    2082
+Current database: wcrs
+
++--------------------+-------------------+-----------------+--------------+------------+-----------------+
+| CONSTRAINT_CATALOG | CONSTRAINT_SCHEMA | CONSTRAINT_NAME | TABLE_SCHEMA | TABLE_NAME | CONSTRAINT_TYPE |
++--------------------+-------------------+-----------------+--------------+------------+-----------------+
+| def                | wcrs              | p_a_user_ibfk_1 | wcrs         | p_a_user   | FOREIGN KEY     |
+| def                | wcrs              | p_a_user_ibfk_2 | wcrs         | p_a_user   | FOREIGN KEY     |
++--------------------+-------------------+-----------------+--------------+------------+-----------------+
+2 rows in set (0.00 sec)
+
+mysql> alter table p_a_user drop foreign key  p_a_user_ibfk_1;
+ERROR 2006 (HY000): MySQL server has gone away
+No connection. Trying to reconnect...
+Connection id:    2083
+Current database: wcrs
+
+Query OK, 0 rows affected (0.18 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> drop index union_id_unique on p_a_user;
+ERROR 2006 (HY000): MySQL server has gone away
+No connection. Trying to reconnect...
+Connection id:    2084
+Current database: wcrs
