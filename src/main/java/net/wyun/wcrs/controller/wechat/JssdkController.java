@@ -5,7 +5,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import net.wyun.wcrs.wechat.jssdk.JssdkConfig;
 import net.wyun.wcrs.wechat.jssdk.Message;
@@ -16,7 +18,7 @@ import net.wyun.wcrs.wechat.jssdk.Message;
  * @author dapengniao
  * @date 2016年3月19日 下午5:57:36
  */
-@Controller
+@RestController
 @RequestMapping("/secure")
 public class JssdkController {
 	
@@ -32,7 +34,7 @@ public class JssdkController {
      * @author dapengniao
      * @date 2016年3月19日 下午5:57:52
      */
-    @RequestMapping("/jssdk")
+    @RequestMapping(value="/jssdk", method=RequestMethod.GET)
     public Message JSSDK_config( @RequestParam(value = "url", required = true) String url,
     		                     @RequestParam(value = "paId") String paId) {
         try {
@@ -40,6 +42,7 @@ public class JssdkController {
             Map<String, String> configMap = jssdkConfig.jsSDK_Sign(url, paId);
             return Message.success(configMap);
         } catch (Exception e) {
+        	e.printStackTrace();
             return Message.error();
         }
  
