@@ -10,7 +10,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,10 +29,14 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import net.sf.json.JSONObject;
 import net.wyun.wcrs.config.WechatProperties;
 import net.wyun.wcrs.model.PublicAccount;
 import net.wyun.wcrs.model.repo.PublicAccountRepository;
 import net.wyun.wcrs.wechat.CommonUtil;
+import net.wyun.wcrs.wechat.HttpUtils;
+import net.wyun.wcrs.wechat.jssdk.GlobalConstants;
+import net.wyun.wcrs.wechat.jssdk.JSTicket;
 import net.wyun.wcrs.wechat.menu.MenuManager;
 import net.wyun.wcrs.wechat.menu.MenuUtil;
 import net.wyun.wcrs.wechat.po.Token;
@@ -49,6 +55,8 @@ public class TokenServiceImpl implements TokenService {
 	private WechatProperties wcrsProperties;
 	
 	ConcurrentMap<String, Token> paTokenMap = new ConcurrentHashMap<String, Token>();
+	ConcurrentMap<String, JSTicket> paTicketMap = new ConcurrentHashMap<String, JSTicket>();
+	
 	Iterable<PublicAccount> publicAccounts;
 
 	
@@ -67,10 +75,33 @@ public class TokenServiceImpl implements TokenService {
 		for(PublicAccount pa:publicAccounts){
 			Token token = CommonUtil.getToken(pa.getAppId(), pa.getAppSecret());
 			this.paTokenMap.put(pa.getPaId(), token);
+			JSTicket jsTicket = null;
+			try {
+				jsTicket = this.getTicket(token.getAccessToken(), WX_TICKET_URL);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			this.paTicketMap.put(pa.getPaId(), jsTicket);
 		}
-		
-		
 	}
+	
+	private final static String WX_TICKET_URL = "https://api.weixin.qq.com/cgi-bin/ticket/getticket";//access_token=ACCESS_TOKEN&type=wx_card";
+	public JSTicket getTicket(String token, String ticketUrl) throws Exception {
+        Map<String, String> params = new HashMap<String, String>();
+        //获取jsticket的执行体
+        params.clear();
+        params.put("access_token", token);
+        params.put("type", "jsapi");
+        String jsticket = HttpUtils.sendGet(ticketUrl, params);
+        logger.info("jsticket: " + jsticket);
+        String jsapi_ticket = JSONObject.fromObject(jsticket).getString("ticket"); 
+        Long ts = System.currentTimeMillis();
+       // GlobalConstants.interfaceUrlProperties.put("jsapi_ticket", jsapi_ticket); // 获取到js-SDK的ticket并赋值保存
+         
+        System.out.println("jsapi_ticket================================================" + jsapi_ticket);
+        return new JSTicket(jsapi_ticket, ts);
+ 
+    }
 	
 	private static long ONE_MINUTE = 60 * 1000;
 	
@@ -174,6 +205,11 @@ public class TokenServiceImpl implements TokenService {
 		}
 		
     }
+
+	@Override
+	public JSTicket getTicket(String paId) {
+		return this.paTicketMap.get(paId);
+	}
 
 	
 }
