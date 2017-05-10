@@ -11,6 +11,8 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import net.wyun.wcrs.model.PublicAccount;
+import net.wyun.wcrs.model.repo.PublicAccountRepository;
 import net.wyun.wcrs.service.TokenService;
 
 /**
@@ -27,6 +29,9 @@ public class JssdkConfig {
 	
 	@Autowired
 	TokenService tokenService;
+	
+	@Autowired
+	PublicAccountRepository paRepo;
 
 	/**
 	 * @Description: 前端jssdk页面配置需要用到的配置参数
@@ -51,7 +56,10 @@ public class JssdkConfig {
 		crypt.update(string1.getBytes("UTF-8"));
 		String signature = byteToHex(crypt.digest());
 		HashMap<String, String> jssdk = new HashMap<String, String>();
-		jssdk.put("appId", GlobalConstants.getInterfaceUrl("appid"));
+		
+		PublicAccount pa = paRepo.findOne(paId);
+		String appId = pa.getAppId();
+		jssdk.put("appId", appId);
 		jssdk.put("timestamp", "" + timestamp);
 		jssdk.put("nonceStr", nonce_str);
 		jssdk.put("signature", signature);
