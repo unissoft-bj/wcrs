@@ -2,6 +2,7 @@ package net.wyun.wcrs.model;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -35,7 +36,7 @@ public class PAUser {
 	private String unionId;
 	*/
 	
-	@ManyToOne(targetEntity=WCUser.class)
+	@ManyToOne(targetEntity=WCUser.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name = "union_id", referencedColumnName="union_id", columnDefinition="VARCHAR(36)")
 	private WCUser user;
 	
