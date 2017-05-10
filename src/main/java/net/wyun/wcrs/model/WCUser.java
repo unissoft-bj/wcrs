@@ -1,11 +1,17 @@
 package net.wyun.wcrs.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 //import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 /**
@@ -46,6 +52,15 @@ public class WCUser {
 	WCUserStatus status;
 	
 	private String phone;
+	/*
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, mappedBy="user")
+    private Collection<PAUser> paUsers = new ArrayList<PAUser>();
+	
+	@Transient
+	public void addPAUser(PAUser paU){
+		paUsers.add(paU);
+	}
+	*/
 	
 	public String getPhone() {
 		return phone;
