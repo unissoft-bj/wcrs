@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import net.wyun.wcrs.model.PAUser;
 import net.wyun.wcrs.model.PublicAccount;
 import net.wyun.wcrs.model.WCUserStatus;
@@ -42,7 +44,7 @@ public class OAuthController {
 	
 	private final static String DENIED = "authdeny";
 	@RequestMapping(value= "/oauth", method=RequestMethod.GET)
-	String auth(/*@RequestBody String data, */ HttpServletRequest request) throws UnsupportedEncodingException{
+	String auth(/*@RequestBody String data, */ HttpServletRequest request, RedirectAttributes redirectAttributes) throws UnsupportedEncodingException{
 		logger.info("Wechat OAuth from {}", request.getRemoteAddr());
 		
 		String openId = null;
@@ -107,6 +109,7 @@ public class OAuthController {
         	//to user page
         	HttpSession session=request.getSession();  
             session.setAttribute("openId",openId==null?"your oid not found":openId);  
+            redirectAttributes.addAttribute("openId", openId);
     		return "redirect:/index.html";
         }else{
         	String redirectUrl = "https://jinshuju.net/f/JN3P8g";
