@@ -53,7 +53,7 @@ CREATE TABLE if not exists p_a_user (
     create_t       datetime          DEFAULT NULL,	                #	记录时间
     modify_t       datetime          DEFAULT NULL,	                #	记录更新时间
     ticket         varchar(100)      DEFAULT NULL,	                #
-    constraint     union_id_unique   UNIQUE (union_id),              #limit one union_id to one public account
+    ###constraint     union_id_unique   UNIQUE (union_id),              #limit one union_id to one public account
     foreign key    (union_id)        references w_c_user(union_id),
     foreign key    (p_a_id)          references public_account (p_a_id)
 )  DEFAULT CHARSET=utf8;
