@@ -17,6 +17,7 @@ import net.wyun.wcrs.model.WCUser;
  * @author michael
  *
  */
+@Deprecated
 @Component
 public class PAUserPersistorImpl implements PAUserPersistor {
 
