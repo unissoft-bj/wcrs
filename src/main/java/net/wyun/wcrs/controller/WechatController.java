@@ -162,6 +162,7 @@ public class WechatController {
 									if(null != wcU){
 										//WCUser already in DB from other Public Account already
 										logger.info("WCUser already exist for unionId: {}", paUserUnionId);
+										paU.setUser(wcU);
 										paUserRepo.save(paU);
 										logger.info("paU with id: {} created successfully!", user.getUnionId());
 									}else{
