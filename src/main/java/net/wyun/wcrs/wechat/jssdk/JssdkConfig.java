@@ -39,6 +39,7 @@ public class JssdkConfig {
 	 *            hashmap {appid,timestamp,nonceStr,signature}
 	 * @param @throws
 	 *            Exception
+	 *  http://blog.csdn.net/gif_t_t/article/details/50774523          
 	 * @author dapengniao
 	 * @date 2016年3月19日 下午3:53:23
 	 */
@@ -46,7 +47,7 @@ public class JssdkConfig {
 		String nonce_str = create_nonce_str();
 		JSTicket ticket = tokenService.getTicket(paId);
 		
-		long timestamp = ticket.getTimeStamp();
+		String timestamp = createTimestamp();
 		String jsapi_ticket = ticket.getTicket();
 		// 注意这里参数名必须全部小写，且必须有序
 		String string1 = "jsapi_ticket=" + jsapi_ticket + "&noncestr=" + nonce_str + "&timestamp=" + timestamp + "&url="
@@ -60,7 +61,9 @@ public class JssdkConfig {
 		PublicAccount pa = paRepo.findOne(paId);
 		String appId = pa.getAppId();
 		jssdk.put("appId", appId);
-		jssdk.put("timestamp", "" + timestamp);
+		jssdk.put("url", url);
+		jssdk.put("jsapi_ticket", jsapi_ticket);
+		jssdk.put("timestamp", timestamp);
 		jssdk.put("nonceStr", nonce_str);
 		jssdk.put("signature", signature);
 		return jssdk;
@@ -76,6 +79,10 @@ public class JssdkConfig {
 		formatter.close();
 		return result;
 	}
+	
+	private static String createTimestamp() {
+        return Long.toString(System.currentTimeMillis() / 1000);
+    }
 
 	private static String create_nonce_str() {
 		return UUID.randomUUID().toString();
